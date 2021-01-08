@@ -1,0 +1,169 @@
+package com.eme22.kumaanime.MainActivity_fragments.adapters;
+
+import android.os.Build;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.eme22.kumaanime.AppUtils.NewsObject.Datum;
+import com.eme22.kumaanime.R;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+
+import java.util.List;
+
+import static android.graphics.text.LineBreaker.JUSTIFICATION_MODE_INTER_WORD;
+
+public class NewsAdapter_v2 extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private final int VIEW_TYPE_ITEM_OTHERS = 0;
+    private final int TYPE_SUBTYPE;
+    private final int VIEW_TYPE_SUBTYPE_MAL = 1;
+
+    public List<Datum> mItemList;
+    private final OnItemClicked listener;
+
+
+
+    public NewsAdapter_v2(List<Datum> itemList, int ListType ,OnItemClicked listener) {
+
+        mItemList = itemList;
+        this.listener = listener;
+        this.TYPE_SUBTYPE = ListType;
+    }
+
+    @NonNull
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if (viewType == VIEW_TYPE_ITEM_OTHERS) {
+            if (TYPE_SUBTYPE == VIEW_TYPE_SUBTYPE_MAL) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.news_item_mal, parent, false);
+                return new LoadingViewHolder(view);
+            }
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.news_item_flv, parent, false);
+            return new LoadingViewHolder(view);
+        }
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_loading, parent, false);
+        return new LoadingViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
+
+        if (viewHolder instanceof ItemViewHolder) {
+            populateItemRows((ItemViewHolder) viewHolder, position);
+        } else if (viewHolder instanceof LoadingViewHolder) {
+            showLoadingView();
+        }
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return mItemList == null ? 0 : mItemList.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return mItemList.get(position) == null ? -1 : VIEW_TYPE_ITEM_OTHERS ;
+    }
+
+    private class ItemViewHolder extends RecyclerView.ViewHolder {
+
+        ImageView preview;
+        TextView title;
+        TextView date;
+        ProgressBar progressBar;
+
+        public ItemViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            preview = itemView.findViewById(R.id.anime_news_image_flv);
+            title = itemView.findViewById(R.id.anime_news_title_flv);
+            progressBar = itemView.findViewById(R.id.anime_news_image_bar_flv);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                title.setJustificationMode(JUSTIFICATION_MODE_INTER_WORD);
+            }
+            date = itemView.findViewById(R.id.anime_news_date_flv);
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (listener != null && position != RecyclerView.NO_POSITION) {
+                    listener.onItemClick(mItemList.get(position).getLink());
+                }
+            });
+
+        }
+    }
+
+
+    private static class LoadingViewHolder extends RecyclerView.ViewHolder {
+
+        ProgressBar progressBar;
+
+        public LoadingViewHolder(@NonNull View itemView) {
+            super(itemView);
+            progressBar = itemView.findViewById(R.id.progressBar);
+        }
+    }
+
+    private void showLoadingView() {
+        //ProgressBar would be displayed
+    }
+
+    private void populateItemRows(ItemViewHolder holder, int position) {
+
+        Datum dat = mItemList.get(position);
+        holder.title.setText(dat.getTitle());
+        //}
+        //holder.title.setText(dat.getTitle());
+        holder.date.setText(dat.getDate());
+        holder.progressBar.setVisibility(View.VISIBLE);
+        //holder.preview.setVisibility(View.INVISIBLE);
+        holder.preview.getViewTreeObserver()
+                .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    // Wait until layout to call Picasso
+                    @Override
+                    public void onGlobalLayout() {
+                        int width;
+                        int height;
+                        // Ensure we call this only once
+                        holder.preview.getViewTreeObserver()
+                                .removeOnGlobalLayoutListener(this);
+                        //holder.preview.setVisibility(View.VISIBLE);
+                        if (TYPE_SUBTYPE == VIEW_TYPE_SUBTYPE_MAL) {
+                            width = 0;
+                            height = holder.preview.getHeight();
+                        }
+                        else {
+                            width = holder.preview.getWidth();
+                            height = 0;
+                        }
+                        Picasso.get().load(dat.getImage()).resize(width,height).into(holder.preview, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                                holder.progressBar.setVisibility(View.GONE);
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+
+                            }
+                        });
+                    }
+                });
+
+    }
+
+    public interface OnItemClicked {
+        void onItemClick(String link);
+    }
+
+
+}

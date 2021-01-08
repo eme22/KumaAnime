@@ -1,0 +1,67 @@
+package com.eme22.kumaanime.AppUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class StringUtils {
+
+    private static final String[] KEYWORDS = {"FIRST","SECOND","THIRD", "FOURTH", "FIFTH"};
+    private static final String[] KEYWORDS_INV = { "1ST","2ND","3RD", "4RD", "5TH"};
+
+    private static String removetwopoints (String a) { return a.replace(":" , "");}
+
+    private static String removecomma (String a) { return a.replace("," , "");}
+
+    private static String removetv (String a) { return a.replace("(TV)" , "");}
+
+    private static String searchforkeywords(String a){
+        for (int i = 0; i < KEYWORDS.length; i++) {
+            if (a.contains(KEYWORDS[i])) {
+                a = a.replace(KEYWORDS[i],KEYWORDS_INV[i]);
+            }
+        }
+        return a;
+    }
+
+    public static String normalizeAnime(String anime, boolean UpperCase){
+
+        if (anime.contains(",")) anime = removecomma(anime);
+        if (anime.contains(":")) anime = removetwopoints(anime);
+        if (anime.contains("(TV)")) anime = removetv(anime);
+        return UpperCase ? searchforkeywords(anime).toUpperCase() : searchforkeywords(anime);
+
+    }
+
+    public static String replacesforSQL(String data){
+        if (data.contains(" ")) data = data.replace(" ","%");
+        if (data.contains("-")) data = data.replace("-","%");
+        return data;
+    }
+
+    public static boolean compareAnimes(String anime1, String anime2){
+        return normalizeAnime(anime1,true).equals(normalizeAnime(anime2,true));
+    }
+
+    public static Boolean compareEpisodes(String anime1, String anime2){
+        if (anime1.contains("Final")) return true;
+        else if (anime2.contains("Final")) return true;
+        else return anime1.equals(anime2);
+    }
+
+    public static String getEpisodeFromJK(String actualUrl) {
+        actualUrl = deleteLast(actualUrl);
+        String[] bits = actualUrl.split("/");
+        return bits[bits.length-1];
+    }
+
+    public static String deleteLast(String str) {
+        if (str != null && str.length() > 0 && str.charAt(str.length() - 1) == 'x') {
+            str = str.substring(0, str.length() - 1);
+        }
+        return str;
+    }
+
+    public static ArrayList<String> getLinks(String data){
+        return new ArrayList<>(Arrays.asList(data.split(",")));
+    }
+}

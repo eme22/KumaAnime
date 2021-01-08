@@ -1,0 +1,170 @@
+package com.eme22.kumaanime.MainActivity_fragments.adapters;
+
+
+import android.os.Build;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.eme22.kumaanime.AppUtils.NewsObject.Datum;
+import com.eme22.kumaanime.R;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+
+import java.util.List;
+
+import static android.graphics.text.LineBreaker.JUSTIFICATION_MODE_INTER_WORD;
+
+public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsAdapterFLV_ViewHolder> {
+
+    List<Datum> news;
+    private final NewsAdapter.OnItemClicked listener;
+    int mode;
+
+    public NewsAdapter(List<Datum> news, OnItemClicked listener, int mode) {
+        this.news = news;
+        this.listener = listener;
+        this.mode =  mode;
+    }
+
+    @NonNull
+    @Override
+    public NewsAdapterFLV_ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater mInflater = LayoutInflater.from(parent.getContext());
+        if (mode == 1) {
+            return new NewsAdapterFLV_ViewHolder(mInflater.inflate(R.layout.news_item_mal, parent, false));
+        }
+        return new NewsAdapterFLV_ViewHolder(mInflater.inflate(R.layout.news_item_flv, parent, false));
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull NewsAdapterFLV_ViewHolder holder, int position) {
+        Datum dat = news.get(position);
+        /*
+        if(mode == 1){
+            holder.title.setVisibility(View.GONE);
+            TranslateAPI translateAPI = new TranslateAPI(
+                    Language.ENGLISH,   //Source Language
+                    Language.SPANISH,         //Target Language
+                    dat.getTitle());
+            translateAPI.setTranslateListener(new TranslateAPI.TranslateListener() {
+                @Override
+                public void onSuccess(String s) {
+                    holder.title.setVisibility(View.VISIBLE);
+                    holder.progressBar_1.setVisibility(View.GONE);
+                    holder.title.setText(s);
+                }
+                @Override
+                public void onFailure(String s) {
+                    holder.title.setVisibility(View.VISIBLE);
+                    holder.progressBar_1.setVisibility(View.GONE);
+                    holder.title.setText(dat.getTitle());
+                }
+            });
+        }
+        else {
+
+         */
+        if (mode == 1) holder.progressBar_1.setVisibility(View.GONE);
+
+            holder.title.setText(dat.getTitle());
+        //}
+        //holder.title.setText(dat.getTitle());
+        holder.date.setText(dat.getDate());
+        //holder.preview.setVisibility(View.INVISIBLE);
+        holder.preview.getViewTreeObserver()
+                .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    // Wait until layout to call Picasso
+                    @Override
+                    public void onGlobalLayout() {
+                        int width;
+                        int height;
+                        // Ensure we call this only once
+                        holder.preview.getViewTreeObserver()
+                                .removeOnGlobalLayoutListener(this);
+                        //holder.preview.setVisibility(View.VISIBLE);
+                        if (mode == 1) {
+                            width = 0;
+                            height = holder.preview.getHeight();
+                        }
+                        else {
+                            width = holder.preview.getWidth();
+                            height = 0;
+                        }
+                        Glide.with(holder.preview.getContext()).load(dat.getImage()).into(holder.preview);
+                        Picasso.get().load(dat.getImage()).resize(width,height).into(holder.preview, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                                holder.progressBar.setVisibility(View.GONE);
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+
+                            }
+                        });
+                        /*
+                        glide.load(dat.getImage())
+                                .apply(new RequestOptions().override(width, height))
+                                .listener(new RequestListener<Drawable>() {
+                                    @Override
+                                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                        return false;
+                                    }
+
+                                    @Override
+                                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                        holder.progressBar.setVisibility(View.GONE);
+                                        return false;
+                                    }
+                                })
+                                .into(holder.preview);
+                         */
+
+                    }
+                });
+
+    }
+
+
+    @Override
+    public int getItemCount() {
+        return (null != news ? news.size() : 0);
+    }
+
+    public interface OnItemClicked {
+        void onItemClick(String link);
+    }
+
+    public class NewsAdapterFLV_ViewHolder extends RecyclerView.ViewHolder {
+        public ImageView preview;
+        public TextView title;
+        public TextView date;
+        public ProgressBar progressBar_1;
+
+
+        public NewsAdapterFLV_ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            preview = itemView.findViewById(R.id.anime_news_image_flv);
+            title = itemView.findViewById(R.id.anime_news_title_flv);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                title.setJustificationMode(JUSTIFICATION_MODE_INTER_WORD);
+            }
+            date = itemView.findViewById(R.id.anime_news_date_flv);
+            itemView.setOnClickListener(view -> {
+                int position = getAdapterPosition();
+                if (listener != null && position != RecyclerView.NO_POSITION) {
+                    listener.onItemClick(news.get(position).getLink());
+                }
+            });
+        }
+    }
+}

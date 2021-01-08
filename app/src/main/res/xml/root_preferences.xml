@@ -1,0 +1,73 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <Preference
+        app:dependency=""
+        app:key="MAL_LOGIN"
+        app:title="@string/settings_0_1"
+        app:icon="@drawable/kanna"
+        />
+
+    <Preference
+        app:dependency=""
+        app:key="MAL_LOGOUT"
+        app:title="@string/settings_0_2"
+        app:icon="@drawable/kanna"
+        />
+
+    <ListPreference
+        app:defaultValue="0"
+        app:entries="@array/settings_1"
+        app:entryValues="@array/settings_1_val"
+        app:key="update"
+        app:title="@string/settings_1"
+        app:useSimpleSummaryProvider="true" />
+
+    <SwitchPreference
+        app:singleLineTitle="false"
+        app:title="@string/settings_7"
+        app:key="nyaa" />
+
+
+    <ListPreference
+        app:defaultValue="2"
+        app:entries="@array/settings_2"
+        app:entryValues="@array/settings_2_val"
+        app:key="notifications"
+        app:title="@string/settings_2"
+        app:useSimpleSummaryProvider="true" />
+
+    <Preference
+        app:key="theme"
+        app:title="@string/settings_3"
+        />
+    <Preference
+        app:key="layout"
+        app:title="@string/settings_4"
+        />
+    <ListPreference
+        app:defaultValue="2"
+        app:entries="@array/settings_5"
+        app:entryValues="@array/settings_5_val"
+        app:key="daynight"
+        app:title="@string/settings_5"
+        app:useSimpleSummaryProvider="true" />
+    <ListPreference
+        app:defaultValue="0"
+        app:entries="@array/settings_7"
+        app:entryValues="@array/settings_7_val"
+        app:key="NEWSMODE"
+        app:title="@string/news_provider"/>
+
+    <ListPreference
+        app:defaultValue="0"
+        app:entries="@array/settings_8"
+        app:entryValues="@array/settings_8_val"
+        app:key="server_update_interval"
+        app:title="@string/server_update_interval"/>
+    <ListPreference
+        app:defaultValue="2"
+        app:entries="@array/settings_9"
+        app:entryValues="@array/settings_9_val"
+        app:key="search_for_animes"
+        app:title="@string/search_for_animes"/>
+
+</PreferenceScreen>

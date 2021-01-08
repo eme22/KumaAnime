@@ -1,0 +1,149 @@
+<resources>
+    <string name="app_name">KumaAnime</string>
+    <string name="icon_description">Loli Anime Kawaii</string>
+    <string name="settings_1">Revisar Actualizaciones al iniciar</string>
+    <string name="settings_1_1">Activado</string>
+    <string name="settings_1_2">Desactivado</string>
+    <string name="settings_2">Notificaciones</string>
+    <string name="settings_2_1">Activadas</string>
+    <string name="settings_2_2">Desactivadas</string>
+    <string name="settings_2_3">Solo anime viendo</string>
+    <string name="settings_3">Temas de la aplicacion</string>
+    <string name="settings_0_1">Conectar con MyAnimeList</string>
+    <string name="settings_0_2">Desconectar de MyAnimelist</string>
+    <string name="settings_4">Diseño</string>
+    <string name="settings_5">Modo Dia/Noche</string>
+    <string name="settings_5_1">Seguir bateria</string>
+    <string name="settings_5_2">Desactivado</string>
+    <string name="mal_login_denied">El usuario o el servidor cancelaron la autorización</string>
+    <string name="settings_0_3">¿Estas realmente seguro de desconectarte?</string>
+    <string name="yes">Si</string>
+    <string name="no">No</string>
+    <string name="settings_5_3">Seguir sistema</string>
+    <string name="settings_5_4">Siempre</string>
+    <string name="login_already">No deberias tocar esto</string>
+    <string name="token_refreshed_succesfully">Token de MAL refrescado</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="settings">Configuración</string>
+    <string name="anime_offline_titleui">Descargas</string>
+    <string name="animes_titleui">Más Animes</string>
+    <string name="new_animes_titleui">Nuevos</string>
+    <string name="my_animelist_titleui">Mis Animes</string>
+    <string name="anime_news_titleui">Noticas Anime</string>
+    <string name="same_theme">Tema ya aplicado</string>
+    <string name="login_error">Algo Salio Mal con MAL</string>
+    <string name="loading_login">Cargando Login…</string>
+    <string name="user_id_text">ID:</string>
+    <string name="user_place">Lugar:</string>
+    <string name="user_date">Unido el:</string>
+    <string name="animes">Animes</string>
+    <string name="statics">Estadísticas</string>
+    <string name="user_days">Dias:</string>
+    <string name="watching">Viendo</string>
+    <string name="completed">Completados</string>
+    <string name="on_hold">En Espera</string>
+    <string name="ptw">Planeando Ver</string>
+    <string name="dropped">Dropeados</string>
+    <string name="user_mean">Valoracion Media:</string>
+    <string name="watched_animes">Animes Vistos:</string>
+    <string name="watched_episodes">Episodios Vistos:</string>
+    <string name="watching_rewatched">Vistos varias veces:</string>
+    <string name="new_animes">Nuevos Animes</string>
+    <string name="new_episodes">Episodios Nuevos</string>
+    <string name="anime_image_description">Anime Image</string>
+    <string name="anime_image">Anime Image</string>
+    <string name="color_default">Por Defecto</string>
+    <string name="cyan">Cian</string>
+    <string name="red">Rojo</string>
+    <string name="green">Verde</string>
+    <string name="purple">Púrpura</string>
+    <string name="orange">Naranja</string>
+    <string name="blue">Azul</string>
+    <string name="app_colors">Colores de la Aplicacion</string>
+    <string name="new_animes_offline">Ultimos Agregados</string>
+    <string name="new_animes_list_offline">Todos</string>
+    <string name="news_description">Imagen Noticia</string>
+    <string name="settings_7">Usar Nyaa como proveedor adicional (Erai Raws)</string>
+    <string name="descripcion">Descripcion:</string>
+    <string name="unknown">Desconocido</string>
+    <string name="genero">Género:</string>
+    <string name="tipo">Tipo:</string>
+    <string name="duracion">Duracion:</string>
+    <string name="estado">Estado:</string>
+    <string name="punctutation">Puntuación:</string>
+    <string name="seen">Episodios Vistos:</string>
+    <string name="of">de</string>
+    <string name="rewatching">Re-viendo</string>
+    <string name="mean">Puntuación media:</string>
+    <string name="use_mal_desc">Usar Descripción de MyAnimeList</string>
+    <string name="more_images">Imágenes:</string>
+    <string name="related_anime">Relacionado:</string>
+    <string name="studios">Estudio(s):</string>
+    <string name="rate">Rate:</string>
+    <string name="aired">Salió:</string>
+    <string name="year">Año:</string>
+    <string name="less">Menos</string>
+    <string name="aplicar_cambios">Aplicar Cambios</string>
+    <string name="or">ó</string>
+    <string name="aceptar">Aceptar</string>
+    <string name="conectarse">Conectarse</string>
+    <string name="servers_explanation">En primer lugar puede utilizar los servidores de MAL para reconocer y tagear los animes, De otro modo los servidores enviaran los datos (puede haber mas animes repetidos)</string>
+    <string name="server_title">Esta Aplicacion tiene 2 modos de funcionamiento:</string>
+    <string name="news_provider">Proovedor de Noticias</string>
+    <string name="server_update_interval">Intervalo de actualizacion del servidor</string>
+    <string name="search_for_animes">Buscar nuevos episodios</string>
+    <string name="anime">Animes</string>
+    <string name="movie">Peliculas</string>
+    <string name="ova">OVAS</string>
+    <string name="special">Especiales</string>
+    <string name="retry">Reintentar</string>
+    <string name="error">Ha ocurrido un error</string>
+    <string name="network_error">No hay red</string>
+    <string name="play">Reproducir</string>
+    <string name="cast">Cast</string>
+    <string name="manage">Manage</string>
+    <string name="more">Más</string>
+    <string name="episode_preview">Episode Preview</string>
+    <string name="_8942">⋮</string>
+    <string name="episode">Episodio %1$s</string>
+    <string name="download">Descargar</string>
+    <string name="update_status">Actualizar estado: %1$s</string>
+    <string name="cancel">Cancelar</string>
+    <string name="see">Ver</string>
+    <string name="loading_sources">Cargando Servidores</string>
+    <string name="none_avaible">No disponible</string>
+    <string name="spanish">Anime Latino</string>
+    <string name="exit_toast">Presione De nuevo para salir</string>
+    <string name="no_avaible">No Disponible</string>
+    <string name="episodes_error">Ha habido un error al conseguir los episodios</string>
+    <string name="search_episodes">Buscando Episodios en linea</string>
+    <string name="search">Buscar Animes</string>
+
+    <string-array name="iconName">
+        <item>Cian</item>
+        <item>Rojo</item>
+        <item>Verde</item>
+        <item>Púrpura</item>
+        <item>Naranja</item>
+        <item>Azul</item>
+    </string-array>
+
+    <string-array name="iconFile">
+        <item>ic_cyan</item>
+        <item>ic_red</item>
+        <item>ic_green</item>
+        <item>ic_purple</item>
+        <item>ic_orange</item>
+        <item>ic_blue</item>
+    </string-array>
+
+    <string-array name="servers">
+        <item>Seleccione uno</item>
+        <item>FLV</item>
+        <item>JK</item>
+        <item>ID</item>
+        <item>RU (Experimental)</item>
+    </string-array>
+
+</resources>

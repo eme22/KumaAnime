@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <!-- Adding transparency above your view due to wrap_content -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.eme22.kumaanime.AppUtils.Mods.CustomLockableNestedScrollView
+            android:id="@+id/nested_scroll_test"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.google.android.material.appbar.AppBarLayout
+                    android:id="@+id/my_anime_appbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?android:attr/colorBackground"
+                    android:fitsSystemWindows="true"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.google.android.material.appbar.CollapsingToolbarLayout
+                        android:id="@+id/myanime_toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fitsSystemWindows="true"
+                        app:contentScrim="?android:attr/colorBackground"
+                        app:layout_scrollFlags="scroll|enterAlways|snap">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/myanime_userdataset1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            tools:context=".MainActivity_fragments.MyAnimeFragment">
+
+                            <ImageView
+                                android:id="@+id/profile_photo"
+                                android:layout_width="wrap_content"
+                                android:layout_height="0dp"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginTop="8dp"
+                                android:src="@drawable/kanna"
+                                app:layout_constraintBottom_toBottomOf="@id/user_date_text"
+                                app:layout_constraintEnd_toStartOf="@+id/user_name"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:ignore="ContentDescription" />
+
+                            <TextView
+                                android:id="@+id/user_name"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginEnd="8dp"
+                                android:maxLines="1"
+                                android:text="RAAAAAAA"
+                                android:textSize="30sp"
+                                app:autoSizeMaxTextSize="40sp"
+                                app:autoSizeMinTextSize="20sp"
+                                app:autoSizeTextType="uniform"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@+id/profile_photo"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:ignore="HardcodedText" />
+
+                            <TextView
+                                android:id="@+id/user_id_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginTop="8dp"
+                                android:text="@string/user_id_text"
+                                android:textSize="18sp"
+                                app:layout_constraintStart_toEndOf="@+id/profile_photo"
+                                app:layout_constraintTop_toBottomOf="@+id/user_name" />
+
+                            <TextView
+                                android:id="@+id/user_place_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginTop="8dp"
+                                android:text="@string/user_place"
+                                android:textSize="18sp"
+                                app:layout_constraintStart_toEndOf="@+id/profile_photo"
+                                app:layout_constraintTop_toBottomOf="@+id/user_id_text" />
+
+                            <TextView
+                                android:id="@+id/user_date_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginBottom="8dp"
+                                android:text="@string/user_date"
+                                android:textSize="18sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toEndOf="@+id/profile_photo"
+                                app:layout_constraintTop_toBottomOf="@+id/user_place_text" />
+
+                            <TextView
+                                android:id="@+id/user_date"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginEnd="8dp"
+                                android:layout_marginBottom="8dp"
+                                android:text="@string/user_date"
+                                android:textSize="18sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@+id/user_date_text"
+                                app:layout_constraintTop_toBottomOf="@+id/user_place_text" />
+
+                            <TextView
+                                android:id="@+id/user_place"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginEnd="8dp"
+                                android:text="@string/user_place"
+                                android:textSize="18sp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@+id/user_place_text"
+                                app:layout_constraintTop_toBottomOf="@+id/user_id_text" />
+
+                            <TextView
+                                android:id="@+id/user_id"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginEnd="8dp"
+                                android:text="@string/user_id_text"
+                                android:textSize="18sp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@+id/user_id_text"
+                                app:layout_constraintTop_toBottomOf="@+id/user_name" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+                    <com.google.android.material.tabs.TabLayout
+                        android:id="@+id/my_animes_tablayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/my_anime_appbar">
+
+                        <com.google.android.material.tabs.TabItem
+                            android:id="@+id/user_statics"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/statics" />
+
+                        <com.google.android.material.tabs.TabItem
+                            android:id="@+id/user_animes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/animes" />
+                    </com.google.android.material.tabs.TabLayout>
+
+                </com.google.android.material.appbar.AppBarLayout>
+
+                <ProgressBar
+                    android:id="@+id/myanime_mainbar"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/my_anime_appbar" />
+
+
+                <com.eme22.kumaanime.AppUtils.Mods.CustomNestedScrollableHost
+                    android:id="@+id/myanime_customnested"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/my_anime_appbar">
+
+                    <androidx.viewpager2.widget.ViewPager2
+                        android:id="@+id/user_viewpager"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:nestedScrollingEnabled="false"
+
+                        />
+                </com.eme22.kumaanime.AppUtils.Mods.CustomNestedScrollableHost>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.eme22.kumaanime.AppUtils.Mods.CustomLockableNestedScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,204 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+
+    <style name="Theme.Splash" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    </style>
+
+    <style name="Theme.Splash2" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="Theme.KumaAnime" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/teal_200</item>
+        <item name="colorPrimaryDark">@color/teal_700</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondaryVariant">@color/teal_700</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimary</item>
+        <!-- Customize your theme here. -->
+        <item name="gradient">@drawable/gradient_1_n</item>
+        <item name="gradient_inv">@drawable/gradient_1_n_inv</item>
+        <item name="android:windowContentTransitions" tools:targetApi="lollipop">true</item>
+    </style>
+
+    <style name="Theme.KumaAnime.Settings">
+        <item name="android:layout">@layout/fragment_settings</item>
+    </style>
+
+    <style name="Theme.KumaAnime.NoActionBar" parent="Theme.KumaAnime.Settings">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="preferenceTheme">@style/Theme.KumaAnime</item>
+    </style>
+
+    <style name="Theme.KumaAnime.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.KumaAnime.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
+    <style name="Theme.KumaAnime.Red" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/red</item>
+        <item name="colorPrimaryDark">@color/red</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/red</item>
+        <item name="colorSecondaryVariant">@color/red</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimary</item>
+        <!-- Customize your theme here. -->
+        <item name="gradient">@drawable/gradient_1_n</item>
+        <item name="gradient_inv">@drawable/gradient_1_n_inv</item>
+    </style>
+
+    <style name="Theme.KumaAnime.Red.Settings">
+        <item name="android:layout">@layout/fragment_settings</item>
+
+    </style>
+
+    <style name="Theme.KumaAnime.Red.NoActionBar" parent="Theme.KumaAnime.Red.Settings">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.KumaAnime.Red.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.KumaAnime.Red.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="Theme.KumaAnime.Blue" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorPrimaryDark">@color/blue</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/blue</item>
+        <item name="colorSecondaryVariant">@color/blue</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimary</item>
+        <!-- Customize your theme here. -->
+        <item name="gradient">@drawable/gradient_1_n</item>
+        <item name="gradient_inv">@drawable/gradient_1_n_inv</item>
+    </style>
+
+    <style name="Theme.KumaAnime.Blue.Settings">
+        <item name="android:layout">@layout/fragment_settings</item>
+
+    </style>
+
+    <style name="Theme.KumaAnime.Blue.NoActionBar" parent="Theme.KumaAnime.Blue.Settings">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="preferenceTheme">@style/Theme.KumaAnime.Blue</item>
+    </style>
+
+    <style name="Theme.KumaAnime.Blue.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.KumaAnime.Blue.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="Theme.KumaAnime.Green" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/green</item>
+        <item name="colorPrimaryDark">@color/green</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/green</item>
+        <item name="colorSecondaryVariant">@color/green</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimary</item>
+        <!-- Customize your theme here. -->
+        <item name="gradient">@drawable/gradient_1_n</item>
+        <item name="gradient_inv">@drawable/gradient_1_n_inv</item>
+    </style>
+
+    <style name="Theme.KumaAnime.Green.Settings">
+        <item name="android:layout">@layout/fragment_settings</item>
+    </style>
+
+    <style name="Theme.KumaAnime.Green.NoActionBar" parent="Theme.KumaAnime.Green.Settings">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="preferenceTheme">@style/Theme.KumaAnime.Green.Settings</item>
+    </style>
+
+    <style name="Theme.KumaAnime.Green.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.KumaAnime.Green.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="Theme.KumaAnime.Purple" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/purple_200</item>
+        <item name="colorPrimaryDark">@color/purple_500</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/purple_200</item>
+        <item name="colorSecondaryVariant">@color/purple_500</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimary</item>
+        <!-- Customize your theme here. -->
+        <item name="gradient">@drawable/gradient_1_n</item>
+        <item name="gradient_inv">@drawable/gradient_1_n_inv</item>
+    </style>
+
+    <style name="Theme.KumaAnime.Purple.Settings">
+        <item name="android:layout">@layout/fragment_settings</item>
+
+    </style>
+
+    <style name="Theme.KumaAnime.Purple.NoActionBar" parent="Theme.KumaAnime.Purple.Settings">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="preferenceTheme">@style/Theme.KumaAnime.Purple.Settings</item>
+    </style>
+
+    <style name="Theme.KumaAnime.Purple.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.KumaAnime.Purple.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
+    <style name="Theme.KumaAnime.Orange" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/orange</item>
+        <item name="colorPrimaryDark">@color/orange</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/orange</item>
+        <item name="colorSecondaryVariant">@color/orange</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimary</item>
+        <!-- Customize your theme here. -->
+        <item name="gradient">@drawable/gradient_1_n</item>
+        <item name="gradient_inv">@drawable/gradient_1_n_inv</item>
+    </style>
+
+    <style name="Theme.KumaAnime.Orange.Settings">
+        <item name="android:layout">@layout/fragment_settings</item>
+
+    </style>
+
+    <style name="Theme.KumaAnime.Orange.NoActionBar" parent="Theme.KumaAnime.Orange.Settings">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="preferenceTheme">@style/Theme.KumaAnime.Orange.Settings</item>
+    </style>
+
+    <style name="Theme.KumaAnime.Orange.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.KumaAnime.Orange.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="Theme.PopupOverlay.Menu" parent="ThemeOverlay.AppCompat.Dark" >
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+</resources>
