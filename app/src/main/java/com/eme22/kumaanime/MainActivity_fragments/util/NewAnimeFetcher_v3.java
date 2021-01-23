@@ -145,7 +145,6 @@ public class NewAnimeFetcher_v3 implements Runnable {
     }
 
     private void fetchtonDB(ArrayList<MiniAnime> all) {
-        ArrayList<MiniAnime> unknown = new ArrayList<>();
         for (int i = 0; i < all.size() ; i++) {
             MiniAnime anim2e = null;
 
@@ -160,7 +159,16 @@ public class NewAnimeFetcher_v3 implements Runnable {
                 }
                 catch (IndexOutOfBoundsException ignored){ }
                 if (anim2e == null){
-                    unknown.add(all.get(i));
+                    try {
+                        anim2e = repo.getanime(StringUtils.replacesforSQLMoreStrict(all.get(i).getTitle()));
+                    } catch (IndexOutOfBoundsException ignored){}
+                    if (anim2e == null) {
+                        all.get(i).setId(repo.insertlastID(all.get(i)));
+                    }
+                    else {
+                        updateLinks(anim2e,all.get(i));
+                        all.set(i, anim2e);
+                    }
                 }
                 else {
                     updateLinks(anim2e,all.get(i));
@@ -172,17 +180,6 @@ public class NewAnimeFetcher_v3 implements Runnable {
                 updateLinks(anim2e,all.get(i));
                 all.set(i, anim2e);
             }
-        }
-
-        try {
-            for (MiniAnime e: unknown) {
-                Log.d("NEW ANIME FAIL: ", e.getLink());
-                repo.insert(e);
-            }
-        }
-        catch (Exception e){
-
-            e.printStackTrace();
         }
     }
 

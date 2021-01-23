@@ -26,6 +26,10 @@ public class EpisodeFetcher implements Runnable{
 
     public EpisodeFetcher(MiniAnime ANIME, Callback callback) {
         this.ANIME = ANIME;
+        try {
+            Log.d("ANIME LOCAL ID:", String.valueOf(ANIME.getId()));
+        }
+        catch (Exception e){e.printStackTrace();}
         this.callback = callback;
     }
 
@@ -51,8 +55,7 @@ public class EpisodeFetcher implements Runnable{
             } catch (IOException e) {
                 e.printStackTrace();
                 callback.onError(e);
-            }
-            catch (NullPointerException ignored){ }
+            } catch (Exception e){ e.printStackTrace(); }
 
 
         }

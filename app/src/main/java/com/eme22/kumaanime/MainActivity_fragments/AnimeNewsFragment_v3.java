@@ -37,7 +37,7 @@ import com.tingyik90.prefmanager.PrefManager;
 
 import java.util.List;
 
-public class AnimeNewsFragment extends Fragment {
+public class AnimeNewsFragment_v3 extends Fragment {
 
     private LinearLayoutManager linearLayoutManager;
     private NewsAdapter_v3 adapter;
@@ -265,15 +265,6 @@ public class AnimeNewsFragment extends Fragment {
 
     private void showError(View masterLayout, Snackbar snackbar, View.OnClickListener listener){
         Connection.showError(masterLayout, snackbar,getString(R.string.error),listener);
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean visible)
-    {
-        super.setUserVisibleHint(visible);
-        if (!visible && snackbar != null ){
-            snackbar.dismiss();
-        }
     }
 
 

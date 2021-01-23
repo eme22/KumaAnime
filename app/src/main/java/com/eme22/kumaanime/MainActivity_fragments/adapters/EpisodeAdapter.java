@@ -1,7 +1,9 @@
 package com.eme22.kumaanime.MainActivity_fragments.adapters;
 
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -10,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
@@ -25,8 +28,8 @@ public class EpisodeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private final int VIEW_TYPE_ITEM_INSIDE = 0;
     private final int TYPE;
-    private final OnItemClicked listener;
-    private int lastviewed = -1;
+    final OnItemClicked listener;
+    long lastviewed = -1;
     public List<MiniEpisode> mItemList;
 
 
@@ -37,7 +40,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
 
-    public void setViewed(int pos){
+    public void setViewed(long pos){
         if (TYPE != 0) return;
         //if (!(pos <  mItemList.size())) throw new IndexOutOfBoundsException();
         lastviewed = pos;
@@ -105,7 +108,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    private void populateItemRowsInside(ItemInsideViewHolder holder, int position) {
+     void populateItemRowsInside(ItemInsideViewHolder holder, int position) {
         MiniEpisode miniEpisode = mItemList.get(position);
         /*
         try {
@@ -116,17 +119,53 @@ public class EpisodeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
         */
         //Glide.with(holder.preview.getContext()).load(miniEpisode.getMainPicture().getMedium()).placeholder(new CircularProgressDrawable(holder.preview.getContext())).error(R.drawable.no_preview_2).into(holder.preview);
-        ImageUtils.getSharedInstance().load(miniEpisode.getMainPicture().getMedium()).placeholder(new CircularProgressDrawable(holder.preview.getContext())).error(R.drawable.no_preview_2).into(holder.preview);
+        ImageUtils.getSharedInstance().load(miniEpisode.getMainPicture().getMedium()).placeholder(new CircularProgressDrawable(holder.preview.getContext())).resize(0,100).error(R.drawable.no_preview_2).into(holder.preview);
         holder.title.setText(holder.itemView.getContext().getString(R.string.episode,miniEpisode.getEpisode()));
         if (position<=lastviewed) holder.seen.setVisibility(View.VISIBLE);
         else holder.seen.setVisibility(View.GONE);
+
+        holder.itemOptions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                //creating a popup menu
+                PopupMenu popup = new PopupMenu(holder.itemOptions.getContext(), holder.itemOptions);
+                //inflating menu from xml resource
+                popup.inflate(R.menu.episode_menu);
+                //adding click listener
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.episode_download:
+                                listener.onDownloadClick(miniEpisode);
+                                return true;
+                            case R.id.episode_status:
+                                listener.onForceStatusUpdate(miniEpisode);
+                                return true;
+                            case R.id.episode_cast:
+                                listener.onCastClick(miniEpisode);
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }
+                });
+                //displaying the popup
+                popup.show();
+
+            }
+        });
 
     }
 
     private void populateItemRowsOutside(ItemOutsideViewHolder holder, int position) {
         MiniEpisode miniEpisode = mItemList.get(position);
 
+        ImageUtils.getSharedInstance().load(miniEpisode.getMainPicture().getMedium()).placeholder(new CircularProgressDrawable(holder.preview.getContext())).error(R.drawable.no_preview_2).fit().centerCrop().into(holder.preview);
 
+
+        /*
         holder.preview.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -137,9 +176,10 @@ public class EpisodeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 width = holder.preview.getWidth();
                 height = 0;
 
-                //ImageUtils.getSharedInstance().load(miniEpisode.getMainPicture().getMedium()).resize(width,height).placeholder(new CircularProgressDrawable(holder.preview.getContext())).error(R.drawable.no_preview_2).centerCrop().into(holder.preview);
+                ImageUtils.getSharedInstance().load(miniEpisode.getMainPicture().getMedium()).resize(width,height).placeholder(new CircularProgressDrawable(holder.preview.getContext())).error(R.drawable.no_preview_2).centerCrop().into(holder.preview);
             }
         });
+        */
 
 
         Log.d("IMAGE: ", miniEpisode.getMainPicture().getMedium());
@@ -197,10 +237,11 @@ public class EpisodeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    private class ItemInsideViewHolder extends RecyclerView.ViewHolder {
+     class ItemInsideViewHolder extends RecyclerView.ViewHolder {
 
-        public ImageView preview;
-        public TextView title, itemOptions;
+        private ImageView preview;
+        private TextView title;
+        private ConstraintLayout itemOptions;
 
         public LinearLayout seen;
 
@@ -218,10 +259,10 @@ public class EpisodeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 int position = getAdapterPosition();
                 listener.onPlayClick(mItemList.get(position));
             });
-            itemOptions.setOnClickListener(v12 -> {
-                int position = getAdapterPosition();
-                listener.onManageClick(mItemList.get(position));
-            });
+            //itemOptions.setOnClickListener(v12 -> {
+            //    int position = getAdapterPosition();
+            //    listener.onManageClick(mItemList.get(position));
+            //});
 
         }
     }

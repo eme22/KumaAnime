@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class MainActivityOffline extends AppCompatActivity {
+public class MainActivityOffline extends PermissionActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -208,7 +208,7 @@
                         app:layout_constraintStart_toEndOf="@+id/textView25"
                         app:layout_constraintTop_toBottomOf="@+id/textView23" />
 
-                    <Spinner
+                    <com.eme22.kumaanime.AppUtils.Mods.OnItemClickSpinner
                         android:id="@+id/anime_info_status_selection"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
@@ -220,7 +220,7 @@
                         app:layout_constraintStart_toEndOf="@+id/textView20"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <Spinner
+                    <com.eme22.kumaanime.AppUtils.Mods.OnItemClickSpinner
                         android:id="@+id/anime_info_punctuation_selection"
                         android:layout_width="wrap_content"
                         android:layout_height="0dp"

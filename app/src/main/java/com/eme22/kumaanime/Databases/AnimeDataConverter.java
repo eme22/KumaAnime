@@ -29,11 +29,14 @@ public class AnimeDataConverter {
 
     @TypeConverter
     public static MainPicture StringToMainPicture(String main) {
-        MainPicture main2 = new MainPicture();
         String[] resources = main.split(",");
-        main2.setMedium(resources[0]);
-        main2.setLarge(resources[1]);
-        return main2;
+        if (resources.length>0){
+            MainPicture main2 = new MainPicture();
+            main2.setMedium(resources[0]);
+            main2.setLarge(resources[1]);
+            return main2;
+        }
+        else return null;
     }
 
 

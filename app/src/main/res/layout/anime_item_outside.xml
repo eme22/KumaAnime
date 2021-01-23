@@ -18,6 +18,72 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/new_animes_title">
 
+        <TextView
+            android:id="@+id/flv_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/flv_background"
+            android:elevation="2dp"
+            android:text="@string/flv"
+            android:textColor="?android:attr/textColorHintInverse"
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@+id/jk_indicator"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:targetApi="lollipop" />
+
+        <TextView
+            android:id="@+id/jk_indicator"
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="2dp"
+            android:background="@drawable/jk_background"
+            android:elevation="2dp"
+            android:text="@string/jk"
+            android:textColor="?android:attr/textColorHintInverse"
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@+id/id_indicator"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:targetApi="lollipop" />
+
+        <TextView
+            android:id="@+id/id_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="2dp"
+            android:background="@drawable/id_background"
+            android:elevation="2dp"
+            android:text="@string/id"
+            android:textColor="?android:attr/textColorHintInverse"
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@+id/raw_indicator"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:targetApi="lollipop" />
+
+        <TextView
+            android:id="@+id/raw_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/raw_background"
+            android:elevation="2dp"
+            android:text="@string/raw"
+            android:textColor="?android:attr/textColorHintInverse"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/image_view_anime_outside"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:targetApi="lollipop" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="right"
+            app:constraint_referenced_ids="flv_indicator,jk_indicator,id_indicator,raw_indicator"
+            tools:layout_editor_absoluteX="216dp" />
+
         <ImageView
             android:id="@+id/image_view_anime_outside"
             android:layout_width="200dp"

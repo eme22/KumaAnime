@@ -1,5 +1,6 @@
 package com.eme22.kumaanime.AppUtils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -472,6 +473,7 @@ private static final String baseurl = "https://www3.animeflv.net";
                     MainPicture actualanimemainpicture = new MainPicture();
                     String actualUrl = baseurl + ele.attr("href");
                     String title = ele.select("h3.Title").text();
+                    if (title.contains("(TV)")) title = title.replace("(TV)","");
                     String image = baseurl +  ele.select("img").attr("src");
                     String type2 = ele.select("span.Type ").text();
                     if (type2.contains("Anime")) actualanime.setShow_type(0);
@@ -498,6 +500,7 @@ private static final String baseurl = "https://www3.animeflv.net";
                     MainPicture actualanimemainpicture = new MainPicture();
                     String actualUrl = ele.attr("href");
                     String title = ele.attr("title");
+                    if (title.contains("(TV)")) title = title.replace("(TV)","");
                     String image = ele.select("img").attr("src");
                     String typea = ele.select("span.eps-num").text();
                     if (typea.contains("Serie")) actualanime.setShow_type(0);
@@ -527,6 +530,7 @@ private static final String baseurl = "https://www3.animeflv.net";
                     String actualUrl = baseurl + ele.attr("href");
                     String title = ele.select("strong").text();
                     if (title.length() >= 47) title = convertepisode(ele.attr("href"));
+                    if (title.contains("(TV)")) title = title.replace("(TV)","");
                     String typea = ele.select("span.tipo").text();
                     if (typea.contains("Serie")) actualanime.setShow_type(0);
                     else if (typea.contains("Peli")) actualanime.setShow_type(1);
@@ -556,6 +560,7 @@ private static final String baseurl = "https://www3.animeflv.net";
                     MainPicture actualanimemainpicture = new MainPicture();
                     String actualUrl = baseurl + ele.attr("href");
                     String title = ele.select("h3.Title").text();
+                    if (title.contains("(TV)")) title = title.replace("(TV)","");
                     String image = ele.select("img").attr("src");
                     String type2 = ele.select("span.Type ").text();
                     if (type2.contains("Anime")) actualanime.setShow_type(0);
@@ -586,6 +591,7 @@ private static final String baseurl = "https://www3.animeflv.net";
                     Element a = ele.select("a").first();
                     String actualUrl = a.attr("href");
                     String title = a.attr("title");
+                    if (title.contains("(TV)")) title = title.replace("(TV)","");
                     String image = ele.select("img").attr("src");
                     String typea = ele.select("span.eps-num").text();
                     if (typea.contains("Serie") || typea.contains("ONA")) actualanime.setShow_type(0);
@@ -615,6 +621,7 @@ private static final String baseurl = "https://www3.animeflv.net";
                     MiniAnime actualanime = new MiniAnime();
                     String actualUrl = baseurl + ele.select("a").attr("href");
                     String title = ele.select("header").text();
+                    if (title.contains("(TV)")) title = title.replace("(TV)","");
                     String image = ele.select("img").attr("src");
                     switch (subtype) {
                         default:
@@ -650,6 +657,7 @@ private static final String baseurl = "https://www3.animeflv.net";
                     String actualUrl = ele.select("a").attr("href");
                     String image = ele.select("img").attr("src");
                     String title = ele.select("figure").attr("title");
+                    if (title.contains("(TV)")) title = title.replace("(TV)","");
                     String type2 = ele.select("span.Type ").attr("class");
                     if (type2.contains("tv")) actualanime.setShow_type(0);
                     else if (type2.contains("Pelicula")) actualanime.setShow_type(1);
@@ -769,9 +777,11 @@ private static final String baseurl = "https://www3.animeflv.net";
     }
 
     private static String convertepisode(String str) {
-        str = str.replace("/", "");
         while (str != null && str.length() > 0 && str.charAt(str.length() - 1) != '-'){
+            Log.d("EPISODEA???", str);
+            str = str.replace("/", "");
             str = str.substring(0, str.length() - 1);
+            Log.d("EPISODEB???", str);
         }
         return str;
     }
@@ -803,6 +813,7 @@ return str.replaceAll("[^0-9.]", "");
         snackbar=null;
     }
 
+    @SuppressLint("ShowToast")
     public static void showError(View masterLayout, Snackbar snackbar, @Nullable String text, @Nullable View.OnClickListener listener){
         if(text==null){
             hideError(snackbar);

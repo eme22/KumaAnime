@@ -16,6 +16,7 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.models.MiniAnime;
 import com.eme22.kumaanime.AppUtils.Connection;
+import com.eme22.kumaanime.AppUtils.OtherUtils;
 import com.eme22.kumaanime.AppUtils.StringUtils;
 import com.eme22.kumaanime.Databases.MainTable.MiniAnimeTable_Repo;
 import com.eme22.kumaanime.MainActivity_fragments.util.TaskRunner;
@@ -48,15 +49,24 @@ public class DatabaseFiller extends Service {
         Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
         TaskRunner taskRunner = new TaskRunner();
         mNotifyManager = NotificationManagerCompat.from(this);
-        String NOTIFICATION_CHANNEL = createNotificationChannel(this);
-        builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
-                .setSmallIcon(R.drawable.ic_cloud_download)
+        String NOTIFICATION_CHANNEL = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NOTIFICATION_CHANNEL = OtherUtils.createNotificationChannel(this, "database_load", "Buscador de Animes", "Notificaciones del canal del buscador de animes");
+            builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
+                    .setSmallIcon(R.drawable.ic_cloud_download)
 //                .setTicker("TICKER") // use something from something from R.string
+                    .setContentTitle("Creando Base de Datos Local") // use something from something from
+                    .setContentText("Espere")
+                    .setOngoing(true)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        }
+        else  builder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.ic_cloud_download)
+//              .setTicker("TICKER") // use something from something from R.string
                 .setContentTitle("Creando Base de Datos Local") // use something from something from
                 .setContentText("Espere")
                 .setOngoing(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
 
         taskRunner.executeAsync(new FLVLinks(), result1 -> taskRunner.executeAsync(new JKLinks(), result2 -> taskRunner.executeAsync(new IDLinks(), result3 -> taskRunner.executeAsync(new offlineFetch(result1, result2, result3), result4 -> taskRunner.executeAsync(new SaveOnDB(result4), result6 -> {
 
@@ -85,6 +95,9 @@ public class DatabaseFiller extends Service {
             int i = 1;
             while (true){
                 try {
+
+
+
                     builder.setContentText("Buscando links de FLV").setProgress(100, i * 100 / 140, false);
                     mNotifyManager.notify(0, builder.build());
                     Log.d("MASTER LINK", baseurl+i);
@@ -302,12 +315,8 @@ public class DatabaseFiller extends Service {
                 MiniAnimeTable_Repo repo = new MiniAnimeTable_Repo(getApplication());
                 builder.setContentText("TERMINANDO BASE DE DATOS").setProgress(0, 0, true);
                 mNotifyManager.notify(0, builder.build());
-                repo.nuke();
-                for (MiniAnime anime: main) {
-                    repo.insert(anime);
-                }
+                repo.reStock(main);
                 new PrefManager(DatabaseFiller.this).putBoolean("FirstStart", false);
-                stopSelf();
             return true;
         }
     }
@@ -424,6 +433,7 @@ public class DatabaseFiller extends Service {
         return FLV;
     }
 
+    /*
     @Nullable
     public static String createNotificationChannel(Context context) {
 
@@ -460,4 +470,6 @@ public class DatabaseFiller extends Service {
             return null;
         }
     }
+
+     */
 }

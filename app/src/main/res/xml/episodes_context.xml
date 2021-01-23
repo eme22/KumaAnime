@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/episode_download_button"
+        android:title="@string/download"
+        />
+    <item
+        android:id="@+id/episode_cast_button"
+        android:title="@string/cast"
+        />
+    <item
+        android:id="@+id/episode_force_seen_button"
+        android:title="@string/force_seen"
+        />
+</menu>

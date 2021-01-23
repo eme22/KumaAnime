@@ -43,7 +43,11 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
+    init();
 
+    }
+
+    private void init() {
         preference1 = findPreference("MAL_LOGIN");
         preference2 = findPreference("MAL_LOGOUT");
         Preference preference3 = findPreference("daynight");
@@ -52,7 +56,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
 
 
         //if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
-            //getPreferenceScreen().removePreference(preference3);
+        //getPreferenceScreen().removePreference(preference3);
         //}
 
         loginonoff(preference1,preference2);
@@ -83,19 +87,21 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         }
 
 
-        assert preference3 != null;
-        preference3.setOnPreferenceChangeListener((preference, newValue) -> {
+        //assert preference3 != null;
+        if (preference3 != null) {
+            preference3.setOnPreferenceChangeListener((preference, newValue) -> {
 
-            String value = newValue.toString();
-            switch (value){
-                case "0":{
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);break;}
-                case "1":{AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY);break;}
-                case "2":{AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);break;}
-                case "3":{AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);break;}
-            }
-            return true;
-        });
+                String value = newValue.toString();
+                switch (value){
+                    case "0":{
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);break;}
+                    case "1":{AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY);break;}
+                    case "2":{AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);break;}
+                    case "3":{AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);break;}
+                }
+                return true;
+            });
+        }
 
     }
 

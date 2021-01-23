@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.eme22.kumaanime.AnimeActivity_fragments.Utils.AnimeFetcher_v2;
 import com.eme22.kumaanime.AnimeActivity_fragments.Utils.EpisodeFetcher;
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.models.MiniAnime;
 import com.eme22.kumaanime.AppUtils.AnimeObjects.episodes.MiniEpisode;
@@ -21,6 +20,7 @@ import com.eme22.kumaanime.AppUtils.OtherUtils;
 import com.eme22.kumaanime.GeneralAnimeActivity;
 import com.eme22.kumaanime.MainActivity_fragments.adapters.EpisodeAdapter;
 import com.eme22.kumaanime.MainActivity_fragments.util.TaskRunner;
+import com.eme22.kumaanime.PermissionActivity;
 import com.eme22.kumaanime.R;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class AnimeEpisodes extends Fragment {
     private static MiniAnime EXTRA_ANIME;
     private static RecyclerView episodes;
     private static CardView loading;
-    private static EpisodeAdapter adapter;
+    static EpisodeAdapter adapter;
 
     private static final int BACK_LENGTH = 1000;
     private long mLastClickTime = 0;
@@ -103,8 +103,10 @@ public class AnimeEpisodes extends Fragment {
                     Log.d("AAA:" ,link);
                 }
 
-                Fragment f = PlayFragment.newInstance(anime.getLink());
-                getParentFragmentManager().beginTransaction().add(R.id.main_container, f, f.getClass().getSimpleName()).addToBackStack(null).commit();
+                taskRunner.executeAsync(new Play(requireActivity(),getParentFragmentManager(),anime));
+
+                //Fragment f = PlayFragment.newInstance(anime.getLink());
+                //getParentFragmentManager().beginTransaction().add(R.id.main_container, f, f.getClass().getSimpleName()).addToBackStack(null).commit();
 
 
             }
@@ -116,7 +118,7 @@ public class AnimeEpisodes extends Fragment {
 
             @Override
             public void onDownloadClick(MiniEpisode anime) {
-
+                taskRunner.executeAsync(new Download((PermissionActivity) requireActivity(),getParentFragmentManager(),anime));
             }
 
             @Override

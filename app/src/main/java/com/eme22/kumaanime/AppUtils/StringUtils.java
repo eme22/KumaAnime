@@ -1,7 +1,12 @@
 package com.eme22.kumaanime.AppUtils;
 
+import java.security.SecureRandom;
+import java.text.Format;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Formatter;
+import java.util.Locale;
+import java.util.Random;
 
 public class StringUtils {
 
@@ -38,6 +43,13 @@ public class StringUtils {
         return data;
     }
 
+    public static String replacesforSQLMoreStrict(String data){
+        if (data.contains(" ")) data = data.replace(" ","%");
+        if (data.contains("-")) data = data.replace("-","%");
+        if (data.contains(":")) data = data.replace(":","%");
+        return data;
+    }
+
     public static boolean compareAnimes(String anime1, String anime2){
         return normalizeAnime(anime1,true).equals(normalizeAnime(anime2,true));
     }
@@ -63,5 +75,23 @@ public class StringUtils {
 
     public static ArrayList<String> getLinks(String data){
         return new ArrayList<>(Arrays.asList(data.split(",")));
+    }
+
+    public static String FormatFile(int id, String episode, String extension){
+        return String.format(Locale.getDefault(), "%d_%s.%s",id,episode,extension);
+    }
+    public static String FormatFile(int id, String extension){
+        return String.format(Locale.getDefault(), "%d.%s",id,extension);
+    }
+
+    public static int createRandomCode(int codeLength) {
+        char[] chars = "1234567890".toCharArray();
+        StringBuilder sb = new StringBuilder();
+        Random random = new SecureRandom();
+        for (int i = 0; i < codeLength; i++) {
+            char c = chars[random.nextInt(chars.length)];
+            sb.append(c);
+        }
+        return Integer.parseInt(sb.toString());
     }
 }

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -26,7 +27,7 @@ public class AnimeAdapter_v4 extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private final OnItemClicked listener;
     private boolean isLoadingAdded = false;
 
-    public List<MiniAnime> mItemList;
+    protected List<MiniAnime> mItemList;
 
     public AnimeAdapter_v4(int TYPE, OnItemClicked listener) {
         this.TYPE = TYPE;
@@ -108,7 +109,6 @@ public class AnimeAdapter_v4 extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
 
         if (viewHolder instanceof ItemViewHolder) {
-
             populateItemRows((ItemViewHolder) viewHolder, position);
         } else if (viewHolder instanceof LoadingViewHolder) {
             showLoadingView();
@@ -129,13 +129,20 @@ public class AnimeAdapter_v4 extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 
 
-    private class ItemViewHolder extends RecyclerView.ViewHolder {
+    class ItemViewHolder extends RecyclerView.ViewHolder {
 
-        public ImageView preview;
-        public TextView title;
+         ImageView preview;
+         LinearLayout selection;
+         TextView title, flv,id,jk,raw;
 
         public ItemViewHolder(int type, @NonNull View itemView) {
             super(itemView);
+
+            flv = itemView.findViewById(R.id.flv_indicator);
+            id = itemView.findViewById(R.id.id_indicator);
+            jk = itemView.findViewById(R.id.jk_indicator);
+            raw = itemView.findViewById(R.id.raw_indicator);
+            selection = itemView.findViewById(R.id.anime_selection);
 
             if (type == 1) {
                 preview = itemView.findViewById(R.id.image_view_anime_outside);
@@ -152,8 +159,15 @@ public class AnimeAdapter_v4 extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     listener.onItemClick(mItemList.get(position));
                 }
             });
+
+            aditionalListener(itemView);
         }
     }
+
+     void aditionalListener(View itemView) {
+
+    }
+
 
     private static class LoadingViewHolder extends RecyclerView.ViewHolder {
 
@@ -169,9 +183,25 @@ public class AnimeAdapter_v4 extends RecyclerView.Adapter<RecyclerView.ViewHolde
         //ProgressBar would be displayed
     }
 
-    private void populateItemRows(ItemViewHolder viewHolder, int position) {
+    protected void populateItemRows(ItemViewHolder viewHolder, int position) {
 
         MiniAnime item = mItemList.get(position);
+
+        /*
+        try {
+            String link = item.getLink();
+            Log.d("TAG ID N:", item.getTitle());
+            Log.d("TAG ID L:", link);
+            if (link.contains("animeflv")) viewHolder.flv.setVisibility(View.VISIBLE);
+            if (link.contains("animeid")) viewHolder.id.setVisibility(View.VISIBLE);
+            if (link.contains("jkanime")) viewHolder.jk.setVisibility(View.VISIBLE);
+            if (link.contains("nyaa")) viewHolder.raw.setVisibility(View.VISIBLE);
+
+        } catch (NullPointerException e){e.printStackTrace();}
+        */
+
+
+
         viewHolder.title.setText(item.getTitle());
         try {
             ImageUtils.getSharedInstance().load(item.getMainPicture().getMedium()).placeholder(new CircularProgressDrawable(viewHolder.preview.getContext())).error(R.drawable.no_preview_2).into(viewHolder.preview);

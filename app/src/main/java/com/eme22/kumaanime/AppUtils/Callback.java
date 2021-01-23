@@ -11,7 +11,7 @@ public interface Callback {
 
 
         @Override
-        public void onSuccess(Object o) {
+        public  void onSuccess(Object o) {
 
         }
 

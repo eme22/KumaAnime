@@ -17,7 +17,7 @@ import com.eme22.kumaanime.R;
 
 import java.util.Objects;
 
-public class AnimeAdapter_v3_live extends PagedListAdapter<MiniAnime, AnimeAdapter_v3_live.ANimeAdapter_v3_ViewHolder> {
+public class AnimeAdapter_v3_live extends PagedListAdapter<MiniAnime, AnimeAdapter_v3_live.animeadapterV3Viewholder> {
 
     private final OnItemClicked listener;
 
@@ -28,16 +28,16 @@ public class AnimeAdapter_v3_live extends PagedListAdapter<MiniAnime, AnimeAdapt
 
     @NonNull
     @Override
-    public AnimeAdapter_v3_live.ANimeAdapter_v3_ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public animeadapterV3Viewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.anime_item, parent, false);
 
-        return new ANimeAdapter_v3_ViewHolder(v);
+        return new animeadapterV3Viewholder(v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AnimeAdapter_v3_live.ANimeAdapter_v3_ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull animeadapterV3Viewholder holder, int position) {
 
         MiniAnime country = getItem(position);
         if (country != null) {
@@ -46,15 +46,19 @@ public class AnimeAdapter_v3_live extends PagedListAdapter<MiniAnime, AnimeAdapt
 
     }
 
-    public class ANimeAdapter_v3_ViewHolder extends RecyclerView.ViewHolder {
+    public class animeadapterV3Viewholder extends RecyclerView.ViewHolder {
 
 
-        TextView countryName;
+        public TextView title, flv,id,jk,raw;
         ImageView image;
 
-        public ANimeAdapter_v3_ViewHolder(@NonNull View itemView) {
+        public animeadapterV3Viewholder(@NonNull View itemView) {
             super(itemView);
-            countryName = itemView.findViewById(R.id.ep_title);
+            flv = itemView.findViewById(R.id.flv_indicator);
+            id = itemView.findViewById(R.id.id_indicator);
+            jk = itemView.findViewById(R.id.jk_indicator);
+            raw = itemView.findViewById(R.id.raw_indicator);
+            title = itemView.findViewById(R.id.ep_title);
             image = itemView.findViewById(R.id.image_view_anime);
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
@@ -65,7 +69,17 @@ public class AnimeAdapter_v3_live extends PagedListAdapter<MiniAnime, AnimeAdapt
         }
 
         public void bindTo(MiniAnime country) {
-            countryName.setText(country.getTitle());
+
+            try {
+                String link = country.getLink();
+                if (link.contains("animeflv")) flv.setVisibility(View.VISIBLE);
+                if (link.contains("animeid")) id.setVisibility(View.VISIBLE);
+                if (link.contains("jkanime")) jk.setVisibility(View.VISIBLE);
+                if (link.contains("nyaa")) raw.setVisibility(View.VISIBLE);
+
+            } catch (NullPointerException ignored){}
+
+            title.setText(country.getTitle());
             //Glide.with(image.getContext()).load(country.getMainPicture().getMedium()).placeholder(new CircularProgressDrawable(image.getContext())).error(R.drawable.no_preview_2).into(image);
             ImageUtils.getSharedInstance().load(country.getMainPicture().getMedium()).placeholder(new CircularProgressDrawable(image.getContext())).into(image);
         }

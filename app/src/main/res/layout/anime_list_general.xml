@@ -12,17 +12,18 @@
         android:orientation="vertical">
 
         <com.eme22.kumaanime.AppUtils.Mods.CustomNestedScrollableHost
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/animelist"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"
                 android:overScrollMode="never"
-                tools:listitem="@layout/anime_item"
                 tools:itemCount="15"
+                tools:listitem="@layout/anime_item"
                 tools:targetApi="lollipop" />
-</com.eme22.kumaanime.AppUtils.Mods.CustomNestedScrollableHost>
+        </com.eme22.kumaanime.AppUtils.Mods.CustomNestedScrollableHost>
     </LinearLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

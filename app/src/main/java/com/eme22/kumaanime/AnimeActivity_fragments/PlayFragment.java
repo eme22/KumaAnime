@@ -31,6 +31,7 @@ import com.eme22.serverproxy.BufferProxy;
 import com.eme22.serverproxy.DownloadTask;
 import com.htetznaing.lowcostvideo.LowCostVideo;
 import com.htetznaing.lowcostvideo.Model.XModel;
+import com.zbiyikli.sgetter.SourceGetter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -38,11 +39,12 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link PlayFragment#newInstance} factory method to
- * create an instance of this fragment.
- *
+ * Play mess fragment {@link DialogFragment} subclass.
+ * Don't use {@link PlayFragment#newInstance}.
+ * Use {@link PlayFragment_v2} instead.
  */
+
+@Deprecated
 public class PlayFragment extends DialogFragment {
 
 
@@ -50,6 +52,7 @@ public class PlayFragment extends DialogFragment {
     private static final String SOURCES = "ANIME_SOURCES";
     private String SOURCES_REAL;
     private LowCostVideo xGetter;
+    private SourceGetter sGetter;
     private Server ACTUAL_SOURCE;
     private boolean playingProxy= false;
     private boolean firstalert = true;
@@ -71,6 +74,7 @@ public class PlayFragment extends DialogFragment {
         if (getArguments() != null) {
             SOURCES_REAL = getArguments().getString(SOURCES);
             xGetter = new LowCostVideo(requireContext());
+            sGetter = new SourceGetter(requireContext());
         }
         else getParentFragmentManager().beginTransaction().remove(this).commit();
     }
@@ -80,7 +84,7 @@ public class PlayFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_play, container, false);
-        final ProgressDialog pd = ProgressDialog.show(requireContext(), "", getString(R.string.loading_sources),true);
+        final ProgressDialog pd = ProgressDialog.show(requireContext(), "", getString(R.string.loading),true);
         String[] sources = SOURCES_REAL.split(",");
         if (sources.length>3) throw new NullPointerException();
 
@@ -121,6 +125,48 @@ public class PlayFragment extends DialogFragment {
             }
         });
 
+        sGetter.onFinish(new SourceGetter.OnTaskCompleted() {
+
+            @Override
+            public void onTaskCompleted(ArrayList<com.zbiyikli.sgetter.Model.XModel> vidURL, boolean multiple_quality) {
+                secondalert = false;
+                if (multiple_quality){
+                    List<Datum> data = new ArrayList<>();
+                    for (com.zbiyikli.sgetter.Model.XModel model : vidURL) {
+                        String name = model.getQuality();
+                        String url = model.getUrl();
+                        data.add(new Datum().withFile(url).withLabel(name));
+                    }
+                    manageServer(new Fembed().withData(data));
+
+                } else {
+                    String url  = vidURL.get(0).getUrl();
+                    manageServer(new CommonServer().withFile(url));
+                }
+            }
+
+            @Override
+            public void goBitLY(String url) {
+                Log.d("BITLY?", url);
+            }
+
+            @Override
+            public void onError() {
+                secondalert = false;
+                taskRunner.executeAsync(new ServerUtil.decode(requireContext(),ACTUAL_SOURCE, new Callback() {
+                    @Override
+                    public void onSuccess(Object o) {
+                        manageServer(o);
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        e.printStackTrace();
+                    }
+                }));
+            }
+        });
+
         taskRunner.executeAsync(new SourceFetcher_v3(sources,new Callback() {
             @Override
             public void onSuccess(Object o) {
@@ -144,8 +190,15 @@ public class PlayFragment extends DialogFragment {
         return v;
     }
 
-    private void decode(Server server){
-        xGetter.find(server.getSource());
+    private void decode(Server server, boolean test){
+        if (test) {
+            try {
+                sGetter.find(server.getSource());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        else xGetter.find(server.getSource());
     }
 
     public void manageServer(Object o){
@@ -286,7 +339,7 @@ public class PlayFragment extends DialogFragment {
         if (Nombres.length == servers.size()){
             builder1.setItems(Nombres, (dialog, which) -> {
                 ACTUAL_SOURCE = servers.get(which);
-                decode(servers.get(which));
+                decode(servers.get(which),false);
             });
 
             new Handler(Looper.getMainLooper()).post(() -> {

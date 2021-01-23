@@ -29,39 +29,45 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/no_preview_2" />
 
-        <TextView
-            android:id="@+id/anime_news_date_flv"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_height="0dp"
             android:layout_marginEnd="8dp"
-            android:text="TextView"
+            app:layout_constraintBottom_toBottomOf="@+id/anime_news_image_flv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/anime_news_image_flv"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="HardcodedText" />
+            app:layout_constraintTop_toTopOf="@+id/anime_news_image_flv">
 
-        <TextView
-            android:id="@+id/anime_news_title_flv"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:maxLines="4"
-            android:minLines="1"
-            android:text="IZUMI KUN ES GAY ABCDEFGHIJKLMNOPRSTUVWXYZ"
-            android:textSize="20sp"
-            app:autoSizeMaxTextSize="100sp"
-            app:autoSizeMinTextSize="20sp"
-            app:autoSizeTextType="uniform"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/anime_news_image_flv"
-            app:layout_constraintTop_toBottomOf="@+id/anime_news_date_flv"
-            tools:ignore="HardcodedText" />
+            <TextView
+                android:id="@+id/anime_news_date_flv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="TextView"
+                app:layout_constraintBottom_toTopOf="@+id/anime_news_title_flv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/anime_news_title_flv"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="8dp"
+                android:maxLines="4"
+                android:minLines="1"
+                android:text="IZUMI KUN ES GAY ABCDEFGHIJKLMNOPRSTUVWXYZ"
+                android:textSize="20sp"
+                app:autoSizeMaxTextSize="100sp"
+                app:autoSizeMinTextSize="20sp"
+                app:autoSizeTextType="uniform"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/anime_news_date_flv"
+                tools:ignore="HardcodedText" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1,20 +1,26 @@
 package com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.models.Common.MainPicture;
+import com.eme22.kumaanime.AppUtils.StringUtils;
 import com.eme22.kumaanime.Databases.AnimeDataConverter;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-@Entity(tableName = "anime_main_table") @TypeConverters(AnimeDataConverter.class)
-public class MiniAnime implements Serializable {
+@Entity(tableName = "anime_main_table", indices = {@Index(value = "title",
+        unique = true)}) @TypeConverters(AnimeDataConverter.class)
+public class MiniAnime implements Serializable, Parcelable {
 
     @PrimaryKey
     @SerializedName("id")
@@ -36,6 +42,41 @@ public class MiniAnime implements Serializable {
     // 0 = ANIME 1 = OVA 2 = PELICULA 3 = ESPECIAL (SI EXISTE)
     // 5 = ESPAÑOL
     private int show_type;
+
+    public MiniAnime() {
+    }
+
+    public MiniAnime(Integer id, String title, MainPicture mainPicture, String link, int show_type) {
+        this.id = id;
+        this.title = title;
+        this.mainPicture = mainPicture;
+        this.link = link;
+        this.show_type = show_type;
+    }
+
+    protected MiniAnime(Parcel in) {
+        if (in.readByte() == 0) {
+            id = null;
+        } else {
+            id = in.readInt();
+        }
+        title = in.readString();
+        mainPicture = in.readParcelable(MainPicture.class.getClassLoader());
+        link = in.readString();
+        show_type = in.readInt();
+    }
+
+    public static final Creator<MiniAnime> CREATOR = new Creator<MiniAnime>() {
+        @Override
+        public MiniAnime createFromParcel(Parcel in) {
+            return new MiniAnime(in);
+        }
+
+        @Override
+        public MiniAnime[] newArray(int size) {
+            return new MiniAnime[size];
+        }
+    };
 
     public String getLink() { return link; }
 
@@ -73,7 +114,7 @@ public class MiniAnime implements Serializable {
 
         @Override
         public boolean areItemsTheSame(@NonNull MiniAnime oldItem, @NonNull MiniAnime newItem) {
-            return oldItem.title.toUpperCase().equals(newItem.title.toUpperCase());
+            return StringUtils.compareAnimes(oldItem.getTitle(),newItem.getTitle());
         }
 
         @Override
@@ -92,7 +133,26 @@ public class MiniAnime implements Serializable {
 
         MiniAnime country = (MiniAnime) obj;
 
-        return country.title.toUpperCase().equals(this.title.toUpperCase()) && country.getShow_type() == this.getShow_type();
+        return StringUtils.compareAnimes(country.getTitle(),this.getTitle()) && country.getShow_type() == this.getShow_type();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        if (id == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(id);
+        }
+        dest.writeString(title);
+        dest.writeParcelable(mainPicture, flags);
+        dest.writeString(link);
+        dest.writeInt(show_type);
     }
 }
 

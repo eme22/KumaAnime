@@ -3,6 +3,7 @@ package com.eme22.kumaanime.MainActivity_fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,7 +76,7 @@ public class AnimeListFragment extends Fragment {
                 public void onSuccess(Object o) {
                     MiniAnime data = (MiniAnime) o;
                     Intent intent = new Intent(AnimeListFragment.this.getActivity(), GeneralAnimeActivity.class);
-                    intent.putExtra(GeneralAnimeActivity.EXTRA_ANIME, data);
+                    intent.putExtra(GeneralAnimeActivity.EXTRA_ANIME, (Parcelable) data);
                     AnimeListFragment.this.startActivity(intent);
                 }
 

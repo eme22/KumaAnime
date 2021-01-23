@@ -6,9 +6,10 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.eme22.kumaanime.MainActivity_fragments.AnimeListFragment;
-import com.eme22.kumaanime.MainActivity_fragments.AnimeNewsFragment;
+import com.eme22.kumaanime.MainActivity_fragments.AnimeNewsFragment_v3;
 import com.eme22.kumaanime.MainActivity_fragments.DownloadedAnimeFragment;
 import com.eme22.kumaanime.MainActivity_fragments.MyAnimeFragment;
+import com.eme22.kumaanime.MainActivity_fragments.MyAnimeFragment_v2;
 import com.eme22.kumaanime.MainActivity_fragments.NewAnimeFragment;
 
 
@@ -33,9 +34,9 @@ public class MainPageAdapter extends FragmentStateAdapter {
                 return new NewAnimeFragment();
                 //return new DownloadedAnimeFragment();
             case 3:
-                return new MyAnimeFragment();
+                return new MyAnimeFragment_v2();
             case 4:
-                return new AnimeNewsFragment();
+                return new AnimeNewsFragment_v3();
             default:
                 return null;
         }

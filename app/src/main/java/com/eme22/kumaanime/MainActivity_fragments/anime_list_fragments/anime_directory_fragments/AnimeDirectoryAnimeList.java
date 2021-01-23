@@ -2,6 +2,7 @@ package com.eme22.kumaanime.MainActivity_fragments.anime_list_fragments.anime_di
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -86,7 +87,7 @@ public class AnimeDirectoryAnimeList extends Fragment {
     protected void generateAdapter() {
         adapter = new AnimeDirectoryAdapterLive(anime -> {
             Intent intent = new Intent(requireContext(), GeneralAnimeActivity.class);
-            intent.putExtra(GeneralAnimeActivity.EXTRA_ANIME, anime);
+            intent.putExtra(GeneralAnimeActivity.EXTRA_ANIME, (Parcelable) anime);
             requireContext().startActivity(intent);
         },requireContext());
         rs.setLayoutManager(linearLayoutManager);

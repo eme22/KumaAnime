@@ -119,6 +119,14 @@
     <string name="episodes_error">Ha habido un error al conseguir los episodios</string>
     <string name="search_episodes">Buscando Episodios en linea</string>
     <string name="search">Buscar Animes</string>
+    <string name="flv">FLV</string>
+    <string name="jk"> JK </string>
+    <string name="id"> ID </string>
+    <string name="raw">Raws</string>
+    <string name="loading">Cargando</string>
+    <string name="force_seen">Forzar Visto</string>
+    <string name="delete">Borrar</string>
+    <string name="are_you_sure">¿Estas seguro? Esto eliminara todos los elementos</string>
 
     <string-array name="iconName">
         <item>Cian</item>

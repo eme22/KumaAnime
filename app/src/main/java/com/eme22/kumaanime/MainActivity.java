@@ -2,42 +2,29 @@ package com.eme22.kumaanime;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.BaseColumns;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.paging.PagedList;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.models.MiniAnime;
+import com.eme22.kumaanime.AnimeActivity_fragments.Utils.downloader.DownloadManager;
 import com.eme22.kumaanime.AppUtils.OtherUtils;
 import com.eme22.kumaanime.AppUtils.Theming;
-import com.eme22.kumaanime.Databases.MainTable.MinAnimeTable_ViewModelCursor;
-import com.eme22.kumaanime.Databases.MainTable.MiniAnimeTable_ViewModelCursorFactory;
-import com.eme22.kumaanime.Databases.MainTable.MiniAnimeTable_ViewModel_v2;
-import com.eme22.kumaanime.Databases.MainTable.MiniAnimeTable_ViewModel_v3;
-import com.eme22.kumaanime.Databases.MainTable.MiniAnimeTable_ViewModel_v3_Factory;
+import com.eme22.kumaanime.MainActivity_fragments.DownloadedAnimeFragment;
 import com.eme22.kumaanime.MainActivity_fragments.adapters.AnimeCursorAdapter;
 import com.eme22.kumaanime.MainActivity_fragments.adapters.MainPageAdapter;
 import com.eme22.kumaanime.MainActivity_fragments.anime_list_fragments.anime_directory_fragments.AnimeDirectoryAnimeList;
@@ -48,14 +35,14 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.tingyik90.prefmanager.PrefManager;
 
+import java.io.File;
 import java.lang.reflect.Field;
-import java.util.Arrays;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends PermissionActivity {
 
     SearchView search;
     Theming theme;
-    Toolbar toolbar;
+    public Toolbar toolbar;
     TabLayout tabl;
     TabLayoutMediator tablm;
     ViewPager2 viewp;
@@ -66,13 +53,13 @@ public class MainActivity extends AppCompatActivity {
     PrefManager prefManager;
     Intent alarmIntent;
     private boolean isFirstBackPressed = false;
-    private int searchss = 1;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
             initdatabase();
+
+            initDownloads();
 
             init();
 
@@ -81,11 +68,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initdatabase() {
-        Intent intent = getIntent();
-        if ( intent.getBooleanExtra("FIRST", true)){
-            intent = new Intent(this, DatabaseFiller.class);
+        PrefManager prefManager = new PrefManager(this);
+        if (prefManager.getBoolean("FirstStart", false) || !databaseFileExists()){
+            Intent intent = new Intent(MainActivity.this, DatabaseFiller.class);
             startService(intent);
         }
+    }
+
+    private boolean databaseFileExists() {
+        return new File(getDatabasePath("database").getAbsolutePath()).exists();
     }
 
     private void slopfix() {
@@ -100,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
             Object touchSlop2 = touchSlopField.get(recyclerView);
             assert touchSlop2 != null;
             int touchSlop = (int) touchSlop2;
-            touchSlopField.set(recyclerView, touchSlop * 6);
+            touchSlopField.set(recyclerView, touchSlop * 5);//6
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -218,9 +209,16 @@ public class MainActivity extends AppCompatActivity {
             if (isFirstBackPressed) {
                 super.onBackPressed();
             } else {
-                isFirstBackPressed = true;
-                OtherUtils.toast(R.string.exit_toast);
-                new Handler().postDelayed(() -> isFirstBackPressed = false, 1500);
+                DownloadedAnimeFragment fragment = (DownloadedAnimeFragment) getSupportFragmentManager().findFragmentByTag("f0");
+                if (fragment.isContextualEnabled) {
+                    fragment.refreshview();
+                }
+                else{
+                    isFirstBackPressed = true;
+                    OtherUtils.toast(R.string.exit_toast);
+                    new Handler().postDelayed(() -> isFirstBackPressed = false, 1500);
+                }
+
             }
         }
     }
@@ -228,6 +226,8 @@ public class MainActivity extends AppCompatActivity {
     SearchView.OnQueryTextListener query = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String query) {
+
+            query = query.replace(" ", "%");
             getSupportFragmentManager().popBackStack();
             Fragment f = AnimeDirectoryAnimeList.newInstance(query);
             toolbar.setNavigationIcon(R.drawable.ic_back);
@@ -238,32 +238,35 @@ public class MainActivity extends AppCompatActivity {
                 search.setIconified(true);
             });
             getSupportFragmentManager().beginTransaction().add(R.id.main_container_2, f).addToBackStack(null).commit();
+
             return false;
+
         }
 
         @Override
         public boolean onQueryTextChange(String newText) {
+            int searchss = 1;
             Log.d("Text", String.valueOf(searchss));
 
             if (newText !=null){
+                newText = newText.replace(" ", "%");
+                getSupportFragmentManager().popBackStack();
+                Fragment f = AnimeDirectoryAnimeList.newInstance(newText);
+                toolbar.setNavigationIcon(R.drawable.ic_back);
+                toolbar.setNavigationOnClickListener(v2 -> {
+                    toolbar.setNavigationIcon(null);
                     getSupportFragmentManager().popBackStack();
-                    Fragment f = AnimeDirectoryAnimeList.newInstance(newText);
-                    toolbar.setNavigationIcon(R.drawable.ic_back);
-                    toolbar.setNavigationOnClickListener(v2 -> {
-                        toolbar.setNavigationIcon(null);
-                        getSupportFragmentManager().popBackStack();
-                        search.setQuery("", false);
-                        search.setIconified(true);
+                    search.setQuery("", false);
+                    search.setIconified(true);
                     });
-                    getSupportFragmentManager().beginTransaction().add(R.id.main_container_2, f).addToBackStack(null).commit();
+                getSupportFragmentManager().beginTransaction().add(R.id.main_container_2, f).addToBackStack(null).commit();
             }
-
             return true;
         }
     };
 
-    private void hideKeyboard() {
-        ((InputMethodManager) getSystemService(AppCompatActivity.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(getWindow().getDecorView().getRootView().getWindowToken() ,0);
+    private void initDownloads(){
+        DownloadManager.getInstance(this).init();
     }
 
 
@@ -272,4 +275,5 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().popBackStack();
         return false;
     };
+
 }

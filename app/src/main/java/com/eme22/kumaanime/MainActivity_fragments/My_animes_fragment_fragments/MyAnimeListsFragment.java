@@ -2,6 +2,7 @@ package com.eme22.kumaanime.MainActivity_fragments.My_animes_fragment_fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +34,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragmento del ViewPager, subclase de {@link Fragment}.
  * Use the {@link MyAnimeListsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
@@ -216,7 +217,7 @@ public class MyAnimeListsFragment extends Fragment {
 // Setup Adapter
         adapter = new AnimeAdapter_v4(0, anime -> {
             Intent intent = new Intent(getActivity(), GeneralAnimeActivity.class);
-            intent.putExtra(GeneralAnimeActivity.EXTRA_ANIME, anime);
+            intent.putExtra(GeneralAnimeActivity.EXTRA_ANIME, (Parcelable) anime);
             startActivity(intent);
         });
         rs.setAdapter(adapter);

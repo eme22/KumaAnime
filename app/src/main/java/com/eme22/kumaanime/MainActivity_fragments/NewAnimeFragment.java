@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcelable;
 import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.eme22.kumaanime.AnimeActivity_fragments.Download;
+import com.eme22.kumaanime.AnimeActivity_fragments.Play;
 import com.eme22.kumaanime.AnimeActivity_fragments.PlayFragment;
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.models.MiniAnime;
 import com.eme22.kumaanime.AppUtils.AnimeObjects.episodes.MiniEpisode;
@@ -29,6 +32,7 @@ import com.eme22.kumaanime.MainActivity_fragments.adapters.AnimeAdapter_v4;
 import com.eme22.kumaanime.MainActivity_fragments.adapters.EpisodeAdapter;
 import com.eme22.kumaanime.MainActivity_fragments.util.NewAnimeFetcher_v3;
 import com.eme22.kumaanime.MainActivity_fragments.util.TaskRunner;
+import com.eme22.kumaanime.PermissionActivity;
 import com.eme22.kumaanime.R;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -175,8 +179,8 @@ public class NewAnimeFragment extends Fragment {
         recyclerView.refreshDrawableState();
         mAdapter2 = new AnimeAdapter_v4(1, anime -> {
 
-            Intent intent = new Intent(NewAnimeFragment.this.getActivity(), GeneralAnimeActivity.class);
-            intent.putExtra(GeneralAnimeActivity.EXTRA_ANIME, anime);
+            Intent intent = new Intent(NewAnimeFragment.this.requireActivity(), GeneralAnimeActivity.class);
+            intent.putExtra(GeneralAnimeActivity.EXTRA_ANIME, (Parcelable) anime);
             NewAnimeFragment.this.startActivity(intent);
 
         });
@@ -200,8 +204,10 @@ public class NewAnimeFragment extends Fragment {
                 new Handler(Looper.getMainLooper()).postDelayed(() -> startActivity(intent), BACK_LENGTH);
                  */
 
-                Fragment f = PlayFragment.newInstance(anime.getLink());
-                getParentFragmentManager().beginTransaction().add(R.id.main_container, f, f.getClass().getSimpleName()).addToBackStack(null).commit();
+                taskRunner.executeAsync(new Play(requireContext(),getParentFragmentManager(),anime));
+
+                //Fragment f = PlayFragment.newInstance(anime.getLink());
+                //getParentFragmentManager().beginTransaction().add(R.id.main_container, f, f.getClass().getSimpleName()).addToBackStack(null).commit();
 
 
             }
@@ -213,7 +219,7 @@ public class NewAnimeFragment extends Fragment {
 
             @Override
             public void onDownloadClick(MiniEpisode anime) {
-
+                taskRunner.executeAsync(new Download((PermissionActivity) requireActivity(),getParentFragmentManager(),anime));
             }
 
             @Override
@@ -232,7 +238,7 @@ public class NewAnimeFragment extends Fragment {
                     public void onSuccess(Object o) {
                         MiniAnime gasp = (MiniAnime) o;
                         Intent intent = new Intent(NewAnimeFragment.this.getActivity(), GeneralAnimeActivity.class);
-                        intent.putExtra(GeneralAnimeActivity.EXTRA_ANIME, gasp);
+                        intent.putExtra(GeneralAnimeActivity.EXTRA_ANIME, (Parcelable) gasp);
                         NewAnimeFragment.this.startActivity(intent);
                     }
 
@@ -407,6 +413,8 @@ public class NewAnimeFragment extends Fragment {
 
         }
     }
+
+
 
 
 }

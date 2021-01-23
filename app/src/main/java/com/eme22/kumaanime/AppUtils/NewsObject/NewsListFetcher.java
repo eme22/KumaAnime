@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+@Deprecated
 public class NewsListFetcher implements Callable<NewsList> {
 
     private final int PAGE;

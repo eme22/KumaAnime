@@ -13,7 +13,7 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/episode_cast"
-        android:title="Cast"
-        app:actionProviderClass="androidx.mediarouter.app.MediaRouteActionProvider"
+        android:title="@string/cast"
         tools:icon="@drawable/mr_button_light" />
+<!--        app:actionProviderClass="androidx.mediarouter.app.MediaRouteActionProvider"-->
 </menu>

@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -24,9 +25,13 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.eme22.kumaanime.AnimeActivity_fragments.Utils.AnimeFetcher_v2;
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.anime_details.AnimeDetails;
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.anime_details.MyListStatus;
+import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.anime_update.AnimeUpdate;
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.models.MiniAnime;
+import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.io.MyAnimeListAPIAdapter;
+import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.io.MyAnimeListAPIService;
 import com.eme22.kumaanime.AppUtils.AnimeObjects.GeneralAnime;
 import com.eme22.kumaanime.AppUtils.Callback;
+import com.eme22.kumaanime.AppUtils.Mods.OnItemClickSpinner;
 import com.eme22.kumaanime.GeneralAnimeActivity;
 import com.eme22.kumaanime.MainActivity_fragments.util.NewAnimeFetcher_v3;
 import com.eme22.kumaanime.MainActivity_fragments.util.TaskRunner;
@@ -35,14 +40,20 @@ import com.tingyik90.prefmanager.PrefManager;
 
 import org.jsoup.nodes.Document;
 
+import java.io.IOException;
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class AnimeInfo extends Fragment {
 
     private MiniAnime anime;
     private final TaskRunner task = new TaskRunner();
-    private Spinner status;
-    private Spinner punctuation;
+    //private Spinner status;
+    //private Spinner punctuation;
+    private OnItemClickSpinner status;
+    private OnItemClickSpinner punctuation;
     private ArrayAdapter<String> a;
     private ArrayAdapter<String> b;
     private ConstraintLayout anime_info_log1;
@@ -69,11 +80,19 @@ public class AnimeInfo extends Fragment {
     private SwipeRefreshLayout swipe_general;
     private NestedScrollView sv;
     private PrefManager prefs;
+    private MyAnimeListAPIService api;
+    private int animeID = 0;
+    boolean isDataLoaded = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         anime = ((GeneralAnimeActivity) requireActivity()).getGeneralAnime();
+        prefs = new PrefManager(requireContext());
+        if (prefs.getBoolean("isLogged",false)){
+            api = MyAnimeListAPIAdapter.getApiServiceWithAuth(requireContext());
+        }
+        else api = null;
 
 
     }
@@ -86,8 +105,89 @@ public class AnimeInfo extends Fragment {
         initView(v);
         init();
         init2();
+        initListeners();
 
         return v;
+    }
+
+    private void initListeners() {
+        status.setOnItemClickListener((parent, view, position, id) -> {
+            if (isDataLoaded) {  statuslivechange(position);}
+        });
+        punctuation.setOnItemClickListener((parent, view, position, id) -> {
+            if (isDataLoaded) { punctuationlivechange(position);}
+        });
+        rewatching.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isDataLoaded) {  rewatchinglivechange(rewatching.isChecked());}
+            }
+        });
+    }
+
+    private void rewatchinglivechange(boolean checked) {
+        if (checked) api.updatemyanime(animeID,null,checked, null,null,null,null,null,null,null).enqueue(new retrofit2.Callback<AnimeUpdate>() {
+            @Override
+            public void onResponse(Call<AnimeUpdate> call, Response<AnimeUpdate> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<AnimeUpdate> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void punctuationlivechange(int position) {
+        Log.d("POSITION", String.valueOf(position));
+        Log.d("ANIME ID", String.valueOf(animeID));
+        api.updatemyanime(animeID,null,null, 10-position,null,null,null,null,null,null).enqueue(new retrofit2.Callback<AnimeUpdate>() {
+            @Override
+            public void onResponse(Call<AnimeUpdate> call, Response<AnimeUpdate> response) {
+                Log.d("PUNCT CHANGE", String.valueOf(response.code()));
+                if (response.body() != null) {
+                    Log.d("PUNCT CHANGE", response.body().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AnimeUpdate> call, Throwable t) {
+                Log.d("STATUS CHANGE", String.valueOf(t.getMessage()));
+            }
+        });
+    }
+
+    private void statuslivechange(int position) {
+        Log.d("POSITION", String.valueOf(position));
+        Log.d("ANIME ID", String.valueOf(animeID));
+
+        String detailsStatus = status.getSelectedItem().toString();
+
+        switch (detailsStatus){
+            default: return;
+            case "Viendo": detailsStatus = "watching";break;
+            case "Completado": detailsStatus = "completed";break;
+            case "En Espera": detailsStatus = "on_hold";break;
+            case "Dropeados": detailsStatus = "dropped";break;
+            case "Planeando Ver": detailsStatus = "plan_to_watch";break;
+        }
+        api.updatemyanime(animeID,detailsStatus,null, null,null,null,null,null,null,null).enqueue(new retrofit2.Callback<AnimeUpdate>() {
+            @Override
+            public void onResponse(Call<AnimeUpdate> call, Response<AnimeUpdate> response) {
+                Log.d("STATUS CHANGE", String.valueOf(response.code()));
+                if (response.body() != null) {
+                    Log.d("STATUS CHANGE", response.body().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AnimeUpdate> call, Throwable t) {
+                Log.d("STATUS CHANGE", String.valueOf(t.getMessage()));
+            }
+        });
+
+
     }
 
 
@@ -125,7 +225,6 @@ public class AnimeInfo extends Fragment {
     }
 
     void init(){
-        prefs = new PrefManager(requireContext());
         a.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         b.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         status.setAdapter(a);
@@ -143,20 +242,13 @@ public class AnimeInfo extends Fragment {
                 @Override
                 public void onSuccess(Object o) {
                     AnimeFetcher_v2.AnimeDetailsDataset dataset = (AnimeFetcher_v2.AnimeDetailsDataset) o;
-                    ArrayList<NewAnimeFetcher_v3.Tuple<Document,String>> documents = ((AnimeFetcher_v2.AnimeDetailsDataset) o).getLinks();
-
                     GeneralAnime result = dataset.getData1();
-
-                    try {
-                    assert result != null;
-                    }
-                    catch (NullPointerException e){
-                    e.printStackTrace();
-                    }
                     AnimeDetails details = result.getDetails();
                     String desc2 = result.getDesc_2();
+                    animeID = details.getId();
                     if (details.getId()==-1) requireActivity().runOnUiThread(() -> UpdateUiForNullAnime(desc2));
                     else requireActivity().runOnUiThread(() -> updateUI(details,desc2));
+                    isDataLoaded = true;
 
                 }
 

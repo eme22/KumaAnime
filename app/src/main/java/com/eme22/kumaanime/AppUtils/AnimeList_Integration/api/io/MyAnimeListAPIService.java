@@ -70,7 +70,7 @@ public interface MyAnimeListAPIService {
     Call<AnimeUpdate> updatemyanime(
             @Path("anime_id") Integer id,
             @Field("status") String status,
-            @Field("is_rewatching") Boolean bool,
+            @Field("is_rewatching") Boolean isRewatching,
             @Field("score") Integer score,
             @Field("num_watched_episodes") Integer watched,
             @Field("priority") Integer priority,

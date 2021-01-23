@@ -12,11 +12,20 @@ import androidx.room.Update;
 
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.models.MiniAnime;
 
+import java.util.ArrayList;
+
 @Dao
 public interface MiniAnimeTable_Dao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(MiniAnime anime);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(ArrayList<MiniAnime> animes);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    long insertAndReturn(MiniAnime anime);
+
     @Delete
     void delete(MiniAnime anime);
 

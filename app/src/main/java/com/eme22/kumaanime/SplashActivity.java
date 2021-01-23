@@ -108,7 +108,7 @@ public class SplashActivity extends AppCompatActivity {
     private void check(boolean[] res) {
 
         Fragment f = WebviewBypassFragment.newInstance(res);
-        getSupportFragmentManager().beginTransaction().replace(R.id.splash_layout, f, f.getClass().getSimpleName()).addToBackStack(null).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.splash_layout, f, f.getClass().getSimpleName()).addToBackStack(null).commitAllowingStateLoss();
 
     }
 

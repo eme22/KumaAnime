@@ -2,12 +2,15 @@ package com.eme22.kumaanime.MainActivity_fragments.My_animes_fragment_fragments;
 
 import android.annotation.SuppressLint;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.userdata.AnimeStatistics;
@@ -64,6 +67,7 @@ public class MyAnimeStaticsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_my_anime_statics, container, false);
 
+        NestedScrollView scrollView = v.findViewById(R.id.anime_statics_main_nest);
         wat = v.findViewById(R.id.user_watching);
         com = v.findViewById(R.id.user_completed);
         onh = v.findViewById(R.id.user_on_hold);
@@ -76,6 +80,10 @@ public class MyAnimeStaticsFragment extends Fragment {
         rew = v.findViewById(R.id.rewatched_animes_num_user);
         ch2 = v.findViewById(R.id.pie_simple);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            scrollView.setNestedScrollingEnabled(false);
+        }
+
         getuserdata();
 
         return v;
@@ -86,7 +94,6 @@ public class MyAnimeStaticsFragment extends Fragment {
         MyAnimeListAPIService rss = MyAnimeListAPIAdapter.getApiServiceWithAuth(getContext());
         Call<Userdata> user = rss.getuserinfo("@me","anime_statistics");
         user.enqueue(new Callback<Userdata>() {
-            @SuppressLint("SetTextI18n")
             @Override
             public void onResponse(@NotNull Call<Userdata> call, @NotNull Response<Userdata> response) {
                 Userdata user2 = response.body();
@@ -103,25 +110,25 @@ public class MyAnimeStaticsFragment extends Fragment {
                 double means = statics[0].getMeanScore();
                 int rewatched = statics[0].getNumTimesRewatched();
 
-                wat.setText(Integer.toString(watching2));
+                wat.setText(String.valueOf(watching2));
 
-                com.setText(Integer.toString(completed2));
+                com.setText(String.valueOf(completed2));
 
-                onh.setText(Integer.toString(onhold2));
+                onh.setText(String.valueOf(onhold2));
 
-                drop.setText(Integer.toString(dropped2));
+                drop.setText(String.valueOf(dropped2));
 
-                ptw3.setText(Integer.toString(ptw2));
+                ptw3.setText(String.valueOf(ptw2));
 
-                mscor.setText(Double.toString(means));
+                mscor.setText(String.valueOf(means));
 
-                animl.setText(Integer.toString(animes));
+                animl.setText(String.valueOf(animes));
 
-                eps.setText(Integer.toString(episodes2));
+                eps.setText(String.valueOf(episodes2));
 
-                dias.setText(Double.toString(days2));
+                dias.setText(String.valueOf(days2));
 
-                rew.setText(Integer.toString(rewatched));
+                rew.setText(String.valueOf(rewatched));
 
                 ch2.setDataPoints(floatArrayOf((float) watching2, (float) completed2, (float) onhold2, (float) dropped2, (float) ptw2));
 
@@ -145,7 +152,7 @@ public class MyAnimeStaticsFragment extends Fragment {
     void checknight(){
 
         int nightModeFlags =
-                getContext().getResources().getConfiguration().uiMode &
+                requireContext().getResources().getConfiguration().uiMode &
                         Configuration.UI_MODE_NIGHT_MASK;
         switch (nightModeFlags) {
             case Configuration.UI_MODE_NIGHT_YES:

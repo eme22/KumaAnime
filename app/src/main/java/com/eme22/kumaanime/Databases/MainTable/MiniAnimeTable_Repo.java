@@ -8,6 +8,7 @@ import androidx.paging.DataSource;
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.models.MiniAnime;
 import com.eme22.kumaanime.Databases.MainDatabase;
 
+import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
 public class MiniAnimeTable_Repo {
@@ -46,6 +47,16 @@ public class MiniAnimeTable_Repo {
         return new GetAsync(dao, anime).call();
     }
 
+    /*
+    public Callable<MiniAnime> getanimeCallable(String anime) {
+        return new GetAsync(dao, anime);
+    }
+
+    public Callable<MiniAnime> getanimeCallable(Integer anime_id) {
+        return new GetAsync(dao, anime_id);
+    }
+    */
+
     public MiniAnime getanime(Integer anime_id) {
         return new GetAsync(dao, anime_id).call();
     }
@@ -53,6 +64,8 @@ public class MiniAnimeTable_Repo {
     public void insert(MiniAnime anime){
         new InsertAsync(dao, anime).call();
     }
+
+    public void reStock(ArrayList<MiniAnime> animes){ new RestockAsync(dao, animes).call(); }
 
     public void update(MiniAnime anime){
         new UpdateAsync(dao, anime).call();
@@ -65,6 +78,10 @@ public class MiniAnimeTable_Repo {
     public void nuke() {new NukeAsync(dao).call();}
 
     public int count() {return new getAnimeCount(dao).call();}
+
+    public int insertlastID(MiniAnime anime) {return new getLastID(dao,anime).call();}
+
+    public Callable<Integer> countCallable() {return new getAnimeCount(dao);}
 
     private static class InsertAsync implements Callable<Void> {
 
@@ -208,6 +225,40 @@ public class MiniAnimeTable_Repo {
         @Override
         public Integer call() {
             return dao.getDataCount();
+        }
+    }
+
+    private static class getLastID implements Callable<Integer> {
+
+        private final MiniAnimeTable_Dao dao;
+        private final MiniAnime anime;
+
+        public getLastID(MiniAnimeTable_Dao dao, MiniAnime anime) {
+            this.anime=anime;
+            this.dao=dao;
+        }
+
+        @Override
+        public Integer call() {
+            dao.insert(anime);
+            return (int) dao.insertAndReturn(anime);
+        }
+    }
+
+    private static class RestockAsync implements Callable<Void> {
+
+        private final MiniAnimeTable_Dao dao;
+        private final ArrayList<MiniAnime> animes;
+        public RestockAsync(MiniAnimeTable_Dao dao, ArrayList<MiniAnime> animes) {
+            this.animes=animes;
+            this.dao=dao;
+        }
+
+        @Override
+        public Void call() {
+            dao.nuke();
+            dao.insertAll(animes);
+            return null;
         }
     }
 }

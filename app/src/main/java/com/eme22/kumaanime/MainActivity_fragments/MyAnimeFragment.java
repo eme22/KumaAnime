@@ -1,6 +1,5 @@
 package com.eme22.kumaanime.MainActivity_fragments;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +12,7 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.userdata.AnimeStatistics;
@@ -30,6 +30,8 @@ import com.tingyik90.prefmanager.PrefManager;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -43,9 +45,10 @@ public class MyAnimeFragment extends Fragment {
     ImageView foto;
     //NestedScrollView sv;
     ConstraintLayout ll;
+    ConstraintLayout myall;
     CustomNestedScrollableHost cps;
-    ProgressBar pp;
     CustomLockableNestedScrollView myScrollView;
+    SwipeRefreshLayout refreshLayout;
 
     TextView name;
     TextView  id;
@@ -66,50 +69,63 @@ public class MyAnimeFragment extends Fragment {
 
         if(prefs.getBoolean("isLogged",false)){
             v = inflater.inflate(R.layout.fragment_my_anime_login, container, false);
+            initLogged(v);
+        }
+        else {
+            v = inflater.inflate(R.layout.fragment_my_anime_nologin, container, false);
+            initNoLogged();
+        }
 
-            {
-                id_text = v.findViewById(R.id.user_id_text);
-                place_text = v.findViewById(R.id.user_place_text);
-                date_text = v.findViewById(R.id.user_date_text);
-            }
-            name = v.findViewById(R.id.user_name);
-            id = v.findViewById(R.id.user_id);
-            place = v.findViewById(R.id.user_place);
-            date = v.findViewById(R.id.user_date);
-            foto = v.findViewById(R.id.profile_photo);
-            //sv = v.findViewById(R.id.my_animes_nestedscroll);
-            //sv.setNestedScrollingEnabled(false);
-            ll = v.findViewById(R.id.myanime_userdataset1);
-            pp = v.findViewById(R.id.myanime_mainbar);
-            cps = v.findViewById(R.id.myanime_customnested);
-            ll.setVisibility(View.GONE);
-            //cps.setVisibility(View.GONE);
-            AnimeStatistics ess = getuserdata();
-            myScrollView = v.findViewById(R.id.nested_scroll_test);
+        return v;
+    }
 
-            header = v.findViewById(R.id.my_anime_appbar);
+    private void initNoLogged() {
 
-            pagea = new MyAnimePageAdapter(getActivity(),ess);
-            tabl = v.findViewById(R.id.my_animes_tablayout);
-            viewp= v.findViewById(R.id.user_viewpager);
-            viewp.setAdapter(pagea);
-            View v2 = (View) viewp.getParent().getParent().getParent();
-            viewp.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+    }
 
-                @Override
-                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                    super.onPageScrolled(position, positionOffset, positionOffsetPixels);
-                    int height = v2.getHeight() - header.getHeight();
-                    if (position == 1 && positionOffset==0.0f && positionOffsetPixels==0){ viewp.getLayoutParams().height = height;
-                    }
-                    if (position == 0 && positionOffset==0.0f && positionOffsetPixels==0){
-                        View v3 = viewp.getChildAt(0);
-                        int height2 =  v3.findViewById(R.id.anime_statics_main_layout).getHeight();
-                        v3.findViewById(R.id.anime_statics_dummy_layout).setMinimumHeight(height2);
-                        viewp.getLayoutParams().height = height2;
-                    }
+    private void initLogged(View v) {
+        refreshLayout = v.findViewById(R.id.my_anime_swiperefresh);
+        id_text = v.findViewById(R.id.user_id_text);
+        place_text = v.findViewById(R.id.user_place_text);
+        date_text = v.findViewById(R.id.user_date_text);
+        myall = v.findViewById(R.id.myanime_all);
+        name = v.findViewById(R.id.user_name);
+        id = v.findViewById(R.id.user_id);
+        place = v.findViewById(R.id.user_place);
+        date = v.findViewById(R.id.user_date);
+        foto = v.findViewById(R.id.profile_photo);
+        //sv = v.findViewById(R.id.my_animes_nestedscroll);
+        //sv.setNestedScrollingEnabled(false);
+        ll = v.findViewById(R.id.myanime_userdataset1);
+        cps = v.findViewById(R.id.myanime_customnested);
+        ll.setVisibility(View.GONE);
+        //cps.setVisibility(View.GONE);
+        AtomicReference<AnimeStatistics> ess = new AtomicReference<>(getuserdata());
+        myScrollView = v.findViewById(R.id.nested_scroll_test);
 
-                    Log.d("VP HEIGHT: ", String.valueOf(viewp.getHeight()));
+        header = v.findViewById(R.id.my_anime_appbar);
+
+        pagea = new MyAnimePageAdapter(getActivity());
+        tabl = v.findViewById(R.id.my_animes_tablayout);
+        viewp= v.findViewById(R.id.user_viewpager);
+        viewp.setAdapter(pagea);
+        View v2 = (View) viewp.getParent().getParent().getParent();
+        viewp.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+                int height = v2.getHeight() - header.getHeight();
+                if (position == 1 && positionOffset==0.0f && positionOffsetPixels==0){ viewp.getLayoutParams().height = height;
+                }
+                if (position == 0 && positionOffset==0.0f && positionOffsetPixels==0){
+                    View v3 = viewp.getChildAt(0);
+                    int height2 =  v3.findViewById(R.id.anime_statics_main_layout).getHeight();
+                    //v3.findViewById(R.id.anime_statics_dummy_layout).setMinimumHeight(height2);
+                    viewp.getLayoutParams().height = height2;
+                }
+
+                Log.d("VP HEIGHT: ", String.valueOf(viewp.getHeight()));
                     /*
                     {
 
@@ -118,42 +134,37 @@ public class MyAnimeFragment extends Fragment {
                      */
 
 
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+                //View v2 = getParentFragmentManager().findFragmentByTag("f" + viewp.getCurrentItem()).getView();
+                //assert v2 != null;
+
+                if( position != 0) {
+                    myScrollView.setScrollingEnabled(false);
+                    hidetab();
+
                 }
-
-                @Override
-                public void onPageSelected(int position) {
-
-                    //View v2 = getParentFragmentManager().findFragmentByTag("f" + viewp.getCurrentItem()).getView();
-                    //assert v2 != null;
-
-                    if( position != 0) {
-                        myScrollView.setScrollingEnabled(false);
-                        hidetab();
-
-                    }
-                    else {
-                        myScrollView.setScrollingEnabled(true);
-                        showtab();
-                    }
-                    //updatePagerHeightForChild(v2,viewp);
+                else {
+                    myScrollView.setScrollingEnabled(true);
+                    showtab();
                 }
-            });
-            tablm = new TabLayoutMediator(
-                    tabl,
-                    viewp,
-                    (tab, position) -> tab.setText(getTitle(position))
-            );
-            tablm.attach();
-        }
-        else {
-            v = inflater.inflate(R.layout.fragment_my_anime_nologin, container, false);
-        }
+                //updatePagerHeightForChild(v2,viewp);
+            }
+        });
+        tablm = new TabLayoutMediator(
+                tabl,
+                viewp,
+                (tab, position) -> tab.setText(getTitle(position))
+        );
+        tablm.attach();
 
 
-
-
-        return v;
+        refreshLayout.setOnRefreshListener(() -> ess.set(getuserdata()));
     }
+
 
     private void updatePagerHeightForChild(View v2, ViewPager2 viewp) {
         v2.post(() -> {
@@ -202,23 +213,24 @@ public class MyAnimeFragment extends Fragment {
         MyAnimeListAPIService rss = MyAnimeListAPIAdapter.getApiServiceWithAuth(getContext());
         Call<Userdata> user = rss.getuserinfo("@me","anime_statistics");
         user.enqueue(new Callback<Userdata>() {
-            @SuppressLint("SetTextI18n")
             @Override
             public void onResponse(@NotNull Call<Userdata> call, @NotNull Response<Userdata> response) {
                 Userdata user2 = response.body();
-                assert user2 != null;
-                statics[0] = user2.getAnimeStatistics();
+                if (user2 != null) {
+                    statics[0] = user2.getAnimeStatistics();
+                }
+                else return;
                 name.setText(user2.getName());
-                id.setText(user2.getId().toString());
+                id.setText(String.valueOf(user2.getId()));
                 String loc = user2.getLocation();
-                if(loc.isEmpty()) place.setText("Desconocido");
+                if(loc.isEmpty()) place.setText(R.string.unknown);
                 else place.setText(user2.getLocation());
                 date.setText(user2.getJoinedAt());
                 ImageUtils.getSharedInstance().load(user2.getPicture()).placeholder(new CircularProgressDrawable(requireContext())).into(foto);
                 //Glide.with(requireContext()).load(user2.getPicture()).placeholder(new CircularProgressDrawable(requireContext())).error(R.drawable.no_preview_2).into(foto);
                 ll.setVisibility(View.VISIBLE);
                 //cps.setVisibility(View.VISIBLE);
-                pp.setVisibility(View.GONE);
+                myall.setVisibility(View.VISIBLE);
             }
 
             @Override

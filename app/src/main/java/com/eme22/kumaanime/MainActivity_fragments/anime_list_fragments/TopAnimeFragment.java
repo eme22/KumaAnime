@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcelable;
 import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,7 +83,7 @@ public class TopAnimeFragment extends Fragment {
         //rs.setItemAnimator(new DefaultItemAnimator());
         adapter = new TopAnimeAdapter(anime -> {
             Intent intent = new Intent(getActivity(), GeneralAnimeActivity.class);
-            intent.putExtra(GeneralAnimeActivity.EXTRA_ANIME, anime);
+            intent.putExtra(GeneralAnimeActivity.EXTRA_ANIME, (Parcelable) anime);
             startActivity(intent);
         });
         rs.setAdapter(adapter);
