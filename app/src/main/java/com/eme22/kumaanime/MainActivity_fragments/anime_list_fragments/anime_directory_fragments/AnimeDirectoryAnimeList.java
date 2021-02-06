@@ -17,9 +17,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.eme22.kumaanime.AnimeActivity;
+import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.models.MiniAnime;
 import com.eme22.kumaanime.Databases.MainTable.MiniAnimeTable_ViewModel_v3;
 import com.eme22.kumaanime.Databases.MainTable.MiniAnimeTable_ViewModel_v3_Factory;
 import com.eme22.kumaanime.GeneralAnimeActivity;
+import com.eme22.kumaanime.MainActivity_fragments.NewAnimeFragment;
 import com.eme22.kumaanime.MainActivity_fragments.adapters.AnimeDirectoryAdapterLive;
 import com.eme22.kumaanime.R;
 
@@ -85,11 +88,12 @@ public class AnimeDirectoryAnimeList extends Fragment {
     }
 
     protected void generateAdapter() {
-        adapter = new AnimeDirectoryAdapterLive(anime -> {
+        /*
             Intent intent = new Intent(requireContext(), GeneralAnimeActivity.class);
             intent.putExtra(GeneralAnimeActivity.EXTRA_ANIME, (Parcelable) anime);
             requireContext().startActivity(intent);
-        },requireContext());
+            */
+        adapter = new AnimeDirectoryAdapterLive(this::loadAnime,requireContext());
         rs.setLayoutManager(linearLayoutManager);
         rs.setItemAnimator(new DefaultItemAnimator());
         rs.setAdapter(adapter);
@@ -114,6 +118,13 @@ public class AnimeDirectoryAnimeList extends Fragment {
             });
 
 
+    }
+
+    private void loadAnime(MiniAnime anime) {
+        //Intent intent = new Intent(NewAnimeFragment.this.requireActivity(), GeneralAnimeActivity.class);
+        Intent intent = new Intent(AnimeDirectoryAnimeList.this.requireActivity(), AnimeActivity.class);
+        intent.putExtra(GeneralAnimeActivity.EXTRA_ANIME, (Parcelable) anime);
+        AnimeDirectoryAnimeList.this.startActivity(intent);
     }
 
     public void setShow_query(String show_query) {

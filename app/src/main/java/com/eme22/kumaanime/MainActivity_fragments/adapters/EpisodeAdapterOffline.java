@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -16,12 +15,10 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
-import com.eme22.kumaanime.AnimeActivity_fragments.Utils.downloader.DownloadManager;
-import com.eme22.kumaanime.AppUtils.AnimeObjects.episodes.MiniEpisode;
+import com.eme22.kumaanime.AnimeActivityOffline;
+import com.eme22.kumaanime.AnimeActivity_fragments.Utils.downloader.DownloadManager_v2;
 import com.eme22.kumaanime.AppUtils.AnimeObjects.episodes.MiniEpisodeOffline;
 import com.eme22.kumaanime.AppUtils.ImageUtils;
-import com.eme22.kumaanime.GeneralAnimeActivity;
-import com.eme22.kumaanime.MainActivity_fragments.DownloadedAnimeFragment;
 import com.eme22.kumaanime.R;
 import com.squareup.picasso.Callback;
 
@@ -31,12 +28,12 @@ import java.util.List;
 public class EpisodeAdapterOffline extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     final OnItemClicked listener;
-    DownloadManager downloadManager;
+    DownloadManager_v2 downloadManager;
     long lastviewed = -1;
     public List<MiniEpisodeOffline> mItemList;
-    GeneralAnimeActivity activity;
+    AnimeActivityOffline activity;
 
-    public EpisodeAdapterOffline(GeneralAnimeActivity activity,DownloadManager downloadManager,OnItemClicked listener) {
+    public EpisodeAdapterOffline(AnimeActivityOffline activity, DownloadManager_v2 downloadManager, OnItemClicked listener) {
         this.listener = listener;
         this.downloadManager = downloadManager;
         this.activity = activity;

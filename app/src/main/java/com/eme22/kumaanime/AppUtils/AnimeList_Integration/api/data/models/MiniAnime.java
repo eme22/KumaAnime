@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
@@ -20,7 +21,7 @@ import java.io.Serializable;
 
 @Entity(tableName = "anime_main_table", indices = {@Index(value = "title",
         unique = true)}) @TypeConverters(AnimeDataConverter.class)
-public class MiniAnime implements Serializable, Parcelable {
+public class MiniAnime implements Parcelable {
 
     @PrimaryKey
     @SerializedName("id")
@@ -45,7 +46,7 @@ public class MiniAnime implements Serializable, Parcelable {
 
     public MiniAnime() {
     }
-
+    @Ignore
     public MiniAnime(Integer id, String title, MainPicture mainPicture, String link, int show_type) {
         this.id = id;
         this.title = title;

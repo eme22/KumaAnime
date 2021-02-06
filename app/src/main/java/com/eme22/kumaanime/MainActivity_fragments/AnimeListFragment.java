@@ -13,6 +13,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.eme22.kumaanime.AnimeActivity;
+import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.anime_list.AnimeList;
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.models.MiniAnime;
 import com.eme22.kumaanime.AppUtils.Callback;
 import com.eme22.kumaanime.Databases.MainTable.MiniAnimeTable_Repo;
@@ -71,13 +73,15 @@ public class AnimeListFragment extends Fragment {
                         .replace(R.id.main_container, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
             });
             random = v.findViewById(R.id.random_anime_cardview);
-            random.setOnClickListener(v13 -> new TaskRunner().executeAsync(new requestDBCount(requireContext(), new Callback() {
+            random.setOnClickListener(v13 -> new TaskRunner().executeAsync(new requestDBCount(requireContext(), new AnimeListFragment.Callback() {
                 @Override
-                public void onSuccess(Object o) {
-                    MiniAnime data = (MiniAnime) o;
+                public void onSuccess(MiniAnime o) {
+                    /*
                     Intent intent = new Intent(AnimeListFragment.this.getActivity(), GeneralAnimeActivity.class);
-                    intent.putExtra(GeneralAnimeActivity.EXTRA_ANIME, (Parcelable) data);
+                    intent.putExtra(GeneralAnimeActivity.EXTRA_ANIME, (Parcelable) o);
                     AnimeListFragment.this.startActivity(intent);
+                    */
+                    loadAnime(o);
                 }
 
                 @Override
@@ -90,10 +94,10 @@ public class AnimeListFragment extends Fragment {
     }
 
     private static class requestDBCount implements Runnable{
-        Callback callback;
+        AnimeListFragment.Callback callback;
         MiniAnimeTable_Repo repo;
 
-        public requestDBCount(Context context, Callback callback) {
+        public requestDBCount(Context context, AnimeListFragment.Callback callback) {
             this.callback = callback;
             this.repo = new MiniAnimeTable_Repo(context);
         }
@@ -108,6 +112,18 @@ public class AnimeListFragment extends Fragment {
                 callback.onError(e);
             }
         }
+    }
+
+    private void loadAnime(MiniAnime anime) {
+        //Intent intent = new Intent(NewAnimeFragment.this.requireActivity(), GeneralAnimeActivity.class);
+        Intent intent = new Intent(AnimeListFragment.this.requireActivity(), AnimeActivity.class);
+        intent.putExtra(GeneralAnimeActivity.EXTRA_ANIME, (Parcelable) anime);
+        AnimeListFragment.this.startActivity(intent);
+    }
+
+    private interface Callback {
+        void onSuccess(MiniAnime animes);
+        void onError(Exception e);
     }
 
 }

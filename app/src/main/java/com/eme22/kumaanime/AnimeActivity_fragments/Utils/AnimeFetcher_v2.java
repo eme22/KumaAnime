@@ -99,7 +99,12 @@ public class AnimeFetcher_v2 implements Runnable{
             MiniAnime TEMP = null;
             AnimeDetails TEMP_DETAILS = null;
             try {
-                AnimeList TEMP0 = rss.getanimelist(anime.getTitle(), 1, 0).execute().body();
+                String title = anime.getTitle();
+                title = (title.length() > 65) ? title.substring(0,65) : title;
+
+                Log.d("Anime Title: ", title);
+
+                AnimeList TEMP0 = rss.getanimelist(title, 1, 0).execute().body();
 
                 if (TEMP0 != null) {
                     TEMP = TEMP0.getData().get(0).getNode();
@@ -210,6 +215,11 @@ public class AnimeFetcher_v2 implements Runnable{
         public void setLinks(ArrayList<NewAnimeFetcher_v3.Tuple<Document, String>> links) {
             this.links = links;
         }
+    }
+
+    public interface Callback{
+        void onSuccess(AnimeDetailsDataset animeDetailsDataset);
+        void onError(Exception e);
     }
 
 }

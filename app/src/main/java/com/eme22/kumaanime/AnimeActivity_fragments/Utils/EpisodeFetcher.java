@@ -19,13 +19,15 @@ import java.util.Iterator;
 public class EpisodeFetcher implements Runnable{
 
     MiniAnime ANIME;
-    Callback callback;
+    EpisodeFetcher.Callback callback;
+    private int episodes;
     private  ArrayList<MiniEpisode> FLVEps = new ArrayList<>();
     private  ArrayList<MiniEpisode> JKEps = new ArrayList<>();
     private  ArrayList<MiniEpisode> IDEps = new ArrayList<>();
 
-    public EpisodeFetcher(MiniAnime ANIME, Callback callback) {
+    public EpisodeFetcher(MiniAnime ANIME,int episodes, Callback callback) {
         this.ANIME = ANIME;
+        this.episodes = episodes;
         try {
             Log.d("ANIME LOCAL ID:", String.valueOf(ANIME.getId()));
         }
@@ -42,6 +44,8 @@ public class EpisodeFetcher implements Runnable{
     }
 
     private void init() {
+
+        Log.d("EPISODEFETCHER", String.valueOf(episodes));
 
         for (String data: StringUtils.getLinks(ANIME.getLink())) {
             Log.d("DATA", data);
@@ -123,6 +127,19 @@ public class EpisodeFetcher implements Runnable{
         FLVEps.addAll(JKEps);
         FLVEps.addAll(IDEps);
 
+        for (MiniEpisode ep: FLVEps) {
+            if (Integer.parseInt(ep.getEpisode()) <= episodes) ep.setViewed(true);
+            Log.d("VIEWED EPS", ep.getName()+" "+ep.getEpisode()+" "+ep.isViewed());
+        }
+
+
         return FLVEps;
+    }
+
+    public interface Callback{
+
+        void onSuccess(ArrayList<MiniEpisode> episodes);
+        void onError(Exception e);
+
     }
 }

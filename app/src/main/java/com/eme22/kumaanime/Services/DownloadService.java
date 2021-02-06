@@ -13,12 +13,11 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.FileProvider;
 
-import com.eme22.kumaanime.AnimeActivity_fragments.Utils.downloader.DownloadManager;
+import com.eme22.kumaanime.AnimeActivity_fragments.Utils.downloader.DownloadManager_v2;
 import com.eme22.kumaanime.AppUtils.AnimeObjects.episodes.MiniEpisode;
 import com.eme22.kumaanime.AppUtils.FileUtils;
-import com.eme22.kumaanime.AppUtils.OtherUtils;
+import com.eme22.kumaanime.AppUtils.NotificationSettings;
 import com.eme22.kumaanime.AppUtils.StringUtils;
-import com.eme22.kumaanime.R;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -41,9 +40,10 @@ import okhttp3.ResponseBody;
  * <p>
  * TODO: Customize class - update intent actions and extra parameters.
  */
+@Deprecated
 public class DownloadService extends JobIntentService {
 
-    static final int JOB_ID = 2000;
+    static final int JOB_ID = 9999;
     private static final String ACTION_STOP_SERVICE = "ACTION_STOP_SERVICE";
     private static final String ACTION_NORMAL = "ACTION_NORMAL";
     private static int id;
@@ -100,25 +100,25 @@ public class DownloadService extends JobIntentService {
         else throw new NullPointerException();
     }
 
-
+    @SuppressWarnings("deprecation")
     private void initNotification() {
         startTime = System.nanoTime();
         mNotifyManager = NotificationManagerCompat.from(this);
 
-        Intent stopSelf = new Intent(this, DownloadService.class);
-        stopSelf.setAction(ACTION_STOP_SERVICE);
-        PendingIntent pStopSelf = PendingIntent.getService(this, 0, stopSelf,PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent stopIntent = new Intent(this, DownloadService.class);
+        //Intent stopSelf = intent.setAction(ACTION_STOP_SERVICE);
+        //PendingIntent pStopSelf = PendingIntent.getService(this, 0, stopSelf,PendingIntent.FLAG_CANCEL_CURRENT);
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            String NOTIFICATION_CHANNEL = OtherUtils.createNotificationChannel(this, "download_id", "Descargas", "Notificacion del canal de descargas");
-            builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
+            //String NOTIFICATION_CHANNEL = OtherUtils.createNotificationChannel(this, "download_id", "Descargas", "Notificacion del canal de descargas");
+            builder = new NotificationCompat.Builder(this, NotificationSettings.CHANNEL_DOWNLOADS)
                     .setSmallIcon(android.R.drawable.stat_sys_download)
                     .setTicker("Descarga de "+episode.getName()) // use something from something from R.string
                     .setContentTitle("Iniciando Descarga de " + episode.getName()) // use something from something from
                     .setOngoing(true)
                     .setProgress(100, 0, false)
                     .setAutoCancel(false)
-                    .addAction(R.drawable.kanna, "Cancelar", pStopSelf)
+                    //.addAction(R.drawable.kanna, "Cancelar", pStopSelf)
                     .setPriority(NotificationCompat.PRIORITY_LOW);
 
         }
@@ -130,7 +130,7 @@ public class DownloadService extends JobIntentService {
                     .setOngoing(true)
                     .setProgress(100, 0, false)
                     .setAutoCancel(false)
-                    .addAction(R.drawable.kanna, "Cancelar", pStopSelf)
+                    //.addAction(R.drawable.kanna, "Cancelar", pStopSelf)
                     .setPriority(NotificationCompat.PRIORITY_LOW);
 
         mNotifyManager.notify(id, builder.build());
@@ -177,7 +177,7 @@ public class DownloadService extends JobIntentService {
             // rename file but cut off .tmp
 
             boolean success = FileUtils.moveFile(tmpFile,finallocation);
-            if (!success) Log.e(DownloadManager.TAG,"IMAGE DOWNLOAD FAILED");
+            if (!success) Log.e(DownloadManager_v2.TAG,"IMAGE DOWNLOAD FAILED");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -245,11 +245,11 @@ public class DownloadService extends JobIntentService {
             Log.e("[Download Error]: " , e.getMessage());
             success = false;
         }
-        Log.d(DownloadManager.TAG,"Download finished");
+        Log.d(DownloadManager_v2.TAG,"Download finished");
         String statusText = success ? "Descarga Completa" : "Descarga Fallida";
-        Log.d(DownloadManager.TAG, String.valueOf(success));
+        Log.d(DownloadManager_v2.TAG, String.valueOf(success));
         int resId = success ? android.R.drawable.stat_sys_download_done : android.R.drawable.stat_notify_error;
-        Log.d(DownloadManager.TAG, "ERROR 1?");
+        Log.d(DownloadManager_v2.TAG, "ERROR 1?");
         builder.setSmallIcon(resId)
                 .setOngoing(false)
                 .setAutoCancel(true)
@@ -257,7 +257,7 @@ public class DownloadService extends JobIntentService {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentText(statusText)
                 .setProgress(0, 0, false);
-        Log.d(DownloadManager.TAG, "ERROR 2?");
+        Log.d(DownloadManager_v2.TAG, "ERROR 2?");
         if (success) {
 
             try {
@@ -265,33 +265,31 @@ public class DownloadService extends JobIntentService {
                 Field f = builder.getClass().getDeclaredField("mActions");
                 f.setAccessible(true);
                 f.set(builder, new ArrayList<NotificationCompat.Action>());
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
+            } catch (NoSuchFieldException | IllegalAccessException e) {
                 e.printStackTrace();
             }
 
 
             try {
-                Log.d(DownloadManager.TAG, "ERROR 3?");
+                Log.d(DownloadManager_v2.TAG, "ERROR 3?");
                 Uri uriForFile = FileProvider.getUriForFile(this, this.getApplicationContext().getPackageName() + ".provider", finallocation);
-                Log.d(DownloadManager.TAG, "ERROR 4?");
+                Log.d(DownloadManager_v2.TAG, "ERROR 4?");
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                Log.d(DownloadManager.TAG, "ERROR 5?");
+                Log.d(DownloadManager_v2.TAG, "ERROR 5?");
                 intent.setDataAndType(uriForFile, "video/mp4");
-                Log.d(DownloadManager.TAG, "ERROR 6?");
+                Log.d(DownloadManager_v2.TAG, "ERROR 6?");
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                Log.d(DownloadManager.TAG, "ERROR 7?");
+                Log.d(DownloadManager_v2.TAG, "ERROR 7?");
                 PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
-                Log.d(DownloadManager.TAG, "ERROR 8?");
+                Log.d(DownloadManager_v2.TAG, "ERROR 8?");
                 builder.setContentIntent(pendingIntent);
-                Log.d(DownloadManager.TAG, "ERROR 9?");
+                Log.d(DownloadManager_v2.TAG, "ERROR 9?");
             }
             catch (Exception e){
                 e.printStackTrace();
             }
         }
-        Log.d(DownloadManager.TAG, "ERROR 10?");
+        Log.d(DownloadManager_v2.TAG, "ERROR 10?");
         try {
             mNotifyManager.notify(id, builder.build());
         }
@@ -303,7 +301,5 @@ public class DownloadService extends JobIntentService {
         stopForeground(true);
         stopSelf();
     }
-
-
 
 }

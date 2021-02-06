@@ -9,11 +9,16 @@ import java.io.File;
 
 public class MiniEpisodeOffline extends MiniEpisode {
 
+    private File episode_file;
+    private File image;
+
+
     public MiniEpisodeOffline() {
+        super();
     }
 
     public MiniEpisodeOffline(int animeID, String name, String episode, MainPicture mainPicture, String link, File episode_file, File image) {
-        super(animeID, name, episode, mainPicture, link);
+        super(animeID, name, episode, mainPicture, link, false);
         this.episode_file = episode_file;
         this.image = image;
     }
@@ -24,6 +29,16 @@ public class MiniEpisodeOffline extends MiniEpisode {
         in.writeSerializable(image);
     }
 
+    public MiniEpisodeOffline(MiniEpisode episode){
+        super(episode.getAnimeID(),episode.getName(),episode.getEpisode(),episode.getMainPicture(),episode.getLink(),episode.isViewed());
+    }
+
+    public MiniEpisodeOffline(MiniEpisode episode, File episode_file, File image){
+        super(episode.getAnimeID(),episode.getName(),episode.getEpisode(),episode.getMainPicture(),episode.getLink(),episode.isViewed());
+        this.episode_file = episode_file;
+        this.image = image;
+    }
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
@@ -31,10 +46,17 @@ public class MiniEpisodeOffline extends MiniEpisode {
         dest.writeSerializable(image);
     }
 
-    private File episode_file;
+    public static final Creator<MiniEpisodeOffline> CREATOR = new Creator<MiniEpisodeOffline>() {
+        @Override
+        public MiniEpisodeOffline createFromParcel(Parcel in) {
+            return new MiniEpisodeOffline(in);
+        }
 
-    private File image;
-
+        @Override
+        public MiniEpisodeOffline[] newArray(int size) {
+            return new MiniEpisodeOffline[size];
+        }
+    };
 
     public File getEpisode_file() {
         return episode_file;

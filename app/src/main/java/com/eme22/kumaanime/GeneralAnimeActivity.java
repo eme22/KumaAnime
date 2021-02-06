@@ -20,9 +20,10 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.eme22.kumaanime.AnimeActivity_fragments.AnimeInfo;
 import com.eme22.kumaanime.AnimeActivity_fragments.Utils.EpisodeFetcherOffline;
-import com.eme22.kumaanime.AnimeActivity_fragments.Utils.downloader.DownloadManager;
-import com.eme22.kumaanime.AnimeActivity_fragments.adapters.Anime_Page_Adapter;
+import com.eme22.kumaanime.AnimeActivity_fragments.Utils.downloader.DownloadManager_v2;
+import com.eme22.kumaanime.AnimeActivity_fragments.adapters.animePageAdapter;
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.models.MiniAnime;
 import com.eme22.kumaanime.AppUtils.AnimeObjects.episodes.MiniEpisodeOffline;
 import com.eme22.kumaanime.AppUtils.ImageUtils;
@@ -38,7 +39,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class GeneralAnimeActivity extends PermissionActivity {
+public class GeneralAnimeActivity extends PermissionActivity implements AnimeInfo.UserEpisodeCallback {
 
     public static final String EXTRA_ANIME = "EXTRA ANIME";
     public static final String EXTRA_ACTION = "EXTRA ACTION";
@@ -47,16 +48,16 @@ public class GeneralAnimeActivity extends PermissionActivity {
     TabLayout tabl;
     ViewPager2 viewp;
     ImageView imagesrc;
-    Anime_Page_Adapter pagea;
+    animePageAdapter pagea;
     TextView title;
     Theming theme;
     private MiniAnime GeneralAnime;
     private int viewed = -1;
     private final TaskRunner taskRunner = new TaskRunner();
-    DownloadManager downloadManager;
+    DownloadManager_v2 downloadManager;
     private boolean isContextualEnabled = false;
     private Toolbar toolbar;
-    private ArrayList<MiniEpisodeOffline> deleteList = new ArrayList<>();
+    private final ArrayList<MiniEpisodeOffline> deleteList = new ArrayList<>();
     private int contextualcounter = 0;
     private SwipeRefreshLayout refreshLayout;
     private EpisodeAdapterOffline adapter;
@@ -82,7 +83,7 @@ public class GeneralAnimeActivity extends PermissionActivity {
     }
 
     void init(){
-        downloadManager = DownloadManager.getInstance(this);
+        downloadManager = new DownloadManager_v2(this);
         theme = new Theming(this);
         theme.themecheck();
         Intent intent = getIntent();
@@ -116,7 +117,7 @@ public class GeneralAnimeActivity extends PermissionActivity {
         title.setText(GeneralAnime.getTitle());
         refreshLayout = findViewById(R.id.offline_episodes_refresh);
 
-        DownloadManager downloadManager = DownloadManager.getInstance(this);
+        DownloadManager_v2 downloadManager =new DownloadManager_v2(this);
 
         try {
 
@@ -189,7 +190,7 @@ public class GeneralAnimeActivity extends PermissionActivity {
         //getSupportActionBar().setDisplayShowHomeEnabled(true);
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
         imagesrc = findViewById(R.id.anime_image);
-        pagea = new Anime_Page_Adapter(this);
+        pagea = new animePageAdapter(this);
         tabl = findViewById(R.id.anime_window_tab);
         viewp = findViewById(R.id.anime_viewpager);
         title = findViewById(R.id.animename);
@@ -256,7 +257,7 @@ public class GeneralAnimeActivity extends PermissionActivity {
     }
 
     private void createAdapter(){
-        adapter = new EpisodeAdapterOffline(this, downloadManager, new EpisodeAdapterOffline.OnItemClicked() {
+        adapter = new EpisodeAdapterOffline(new AnimeActivityOffline(), downloadManager, new EpisodeAdapterOffline.OnItemClicked() {
             @Override
             public void onPlayClick(MiniEpisodeOffline anime) {
 
@@ -322,12 +323,14 @@ public class GeneralAnimeActivity extends PermissionActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public int getViewed() {
+    @Override
+    public long getEpisode() {
         return viewed;
     }
 
-    public void setViewed(int viewed) {
-        this.viewed = viewed;
+    @Override
+    public void setEpisode(long episode) {
+        this.viewed = (int) episode;
     }
 
     public MiniAnime getGeneralAnime() {

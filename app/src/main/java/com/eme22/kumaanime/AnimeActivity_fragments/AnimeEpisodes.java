@@ -1,6 +1,8 @@
 package com.eme22.kumaanime.AnimeActivity_fragments;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,12 +14,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.eme22.kumaanime.AnimeActivity;
 import com.eme22.kumaanime.AnimeActivity_fragments.Utils.EpisodeFetcher;
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.models.MiniAnime;
+import com.eme22.kumaanime.AppUtils.AnimeObjects.GeneralAnime;
 import com.eme22.kumaanime.AppUtils.AnimeObjects.episodes.MiniEpisode;
-import com.eme22.kumaanime.AppUtils.Callback;
 import com.eme22.kumaanime.AppUtils.OtherUtils;
-import com.eme22.kumaanime.GeneralAnimeActivity;
 import com.eme22.kumaanime.MainActivity_fragments.adapters.EpisodeAdapter;
 import com.eme22.kumaanime.MainActivity_fragments.util.TaskRunner;
 import com.eme22.kumaanime.PermissionActivity;
@@ -25,7 +27,7 @@ import com.eme22.kumaanime.R;
 
 import java.util.ArrayList;
 
-public class AnimeEpisodes extends Fragment {
+public class AnimeEpisodes extends Fragment implements AnimeActivity.AnimeActivityLoad{
 
     private static final TaskRunner taskRunner = new TaskRunner();
 
@@ -37,11 +39,10 @@ public class AnimeEpisodes extends Fragment {
     private static final int BACK_LENGTH = 1000;
     private long mLastClickTime = 0;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EXTRA_ANIME = ((GeneralAnimeActivity) requireActivity()).getGeneralAnime();
+        EXTRA_ANIME = ((AnimeActivity) requireActivity()).getGeneralAnime();
     }
 
     @Override
@@ -49,19 +50,31 @@ public class AnimeEpisodes extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_anime_episodes, container, false);
         initView(v);
-        loadepisodes();
+        if (((AnimeActivity) requireActivity()).isLoaded()) loadepisodes();
+        //loadepisodes();
 
         return v;
     }
 
-    @SuppressWarnings("unchecked")
     private void loadepisodes() {
-        taskRunner.executeAsync(new EpisodeFetcher(EXTRA_ANIME, new Callback() {
+        //LocalBroadcastManager.getInstance(requireContext()).registerReceiver(receiver,
+        //        new IntentFilter("EPISODE_SEEN_SEND"));
+
+        GeneralAnime result = ((AnimeActivity) requireActivity()).getResult();
+
+        int eps;
+        try {
+            eps = result.getDetails().getMyListStatus().getNumEpisodesWatched();
+        }
+        catch (NullPointerException e){
+            eps = -1;
+        }
+        //((AnimeActivity) requireActivity()).setEpisode(eps);
+        taskRunner.executeAsync(new EpisodeFetcher(EXTRA_ANIME, eps, new EpisodeFetcher.Callback() {
             @Override
-            public void onSuccess(Object o) {
-                requireActivity().runOnUiThread(() -> {
-                    adapter.setViewed(((GeneralAnimeActivity) requireActivity()).getViewed());
-                    adapter.addAll((ArrayList<MiniEpisode>) o);
+            public void onSuccess(ArrayList<MiniEpisode> o) {
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    adapter.addAll(o);
                     Log.d("RECYCLER DATA:", String.valueOf(adapter.getItemCount()));
                     loading.setVisibility(View.GONE);
                 });
@@ -70,16 +83,20 @@ public class AnimeEpisodes extends Fragment {
 
             @Override
             public void onError(Exception e) {
-                requireActivity().runOnUiThread(() -> {
+                new Handler(Looper.getMainLooper()).post(() -> {
                     loading.setVisibility(View.GONE);
                     OtherUtils.toast(R.string.episodes_error);
                 });
 
             }
         }));
+
     }
 
     private void initView(View v){
+
+        ((AnimeActivity) requireActivity()).setAnimeeps(this);
+
         episodes = v.findViewById(R.id.episodes_recycler_inside);
         loading = v.findViewById(R.id.episodes_loading_snackbar);
         adapter = new EpisodeAdapter(0, new EpisodeAdapter.OnItemClicked() {
@@ -140,5 +157,14 @@ public class AnimeEpisodes extends Fragment {
         episodes.setAdapter(adapter);
     }
 
+    public void reloadData(){
+
+
+    }
+
+    @Override
+    public void loadData() {
+        loadepisodes();
+    }
 
 }

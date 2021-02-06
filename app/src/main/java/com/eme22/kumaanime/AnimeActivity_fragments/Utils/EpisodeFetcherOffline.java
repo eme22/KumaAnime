@@ -1,18 +1,15 @@
 package com.eme22.kumaanime.AnimeActivity_fragments.Utils;
 
-import android.app.Activity;
-
-import com.eme22.kumaanime.AnimeActivity_fragments.Utils.downloader.DownloadManager;
+import com.eme22.kumaanime.AnimeActivity_fragments.Utils.downloader.DownloadManager_v2;
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.models.MiniAnime;
 import com.eme22.kumaanime.AppUtils.AnimeObjects.episodes.MiniEpisode;
 import com.eme22.kumaanime.AppUtils.AnimeObjects.episodes.MiniEpisodeOffline;
-import com.eme22.kumaanime.AppUtils.Callback;
 import com.eme22.kumaanime.PermissionActivity;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,10 +18,10 @@ public class EpisodeFetcherOffline implements Runnable{
     private MiniAnime ANIME;
     private EpisodeFetcherOfflineCallback callback;
     private ArrayList<MiniEpisode> data;
-    private DownloadManager manager;
+    private DownloadManager_v2 manager;
 
     public EpisodeFetcherOffline(PermissionActivity context, MiniAnime ANIME, EpisodeFetcherOfflineCallback callback) {
-        this.manager = DownloadManager.getInstance(context);
+        this.manager =new DownloadManager_v2(context);
         this.ANIME = ANIME;
         this.callback = callback;
         this.data = new ArrayList<>();
@@ -50,6 +47,7 @@ public class EpisodeFetcherOffline implements Runnable{
                 }
             }
 
+            episodeHashMap.values().removeAll(Collections.singleton(null));
             callback.onSuccess(new ArrayList<>(episodeHashMap.values()));
         }
         catch (Exception e){
@@ -85,6 +83,7 @@ public class EpisodeFetcherOffline implements Runnable{
             }
             episodeTMP.setEpisode_file(f);
             episodeTMP.setEpisode(m.group(1));
+
             episodeHashMap.put(Integer.parseInt(m.group(1)),episodeTMP);
         }
     }

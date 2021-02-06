@@ -12,7 +12,10 @@ import android.widget.Toast;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.eme22.kumaanime.AnimeActivity;
 import com.eme22.kumaanime.AnimeActivity_fragments.Utils.ServerUtil;
+import com.eme22.kumaanime.AnimeActivity_fragments.Utils.downloader.DownloadManager_v2;
+import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.anime_update.AnimeUpdate;
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.io.MyAnimeListAPIAdapter;
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.io.MyAnimeListAPIService;
 import com.eme22.kumaanime.AppUtils.AnimeObjects.episodes.MiniEpisode;
@@ -33,9 +36,14 @@ import com.htetznaing.lowcostvideo.Model.XModel;
 import com.tingyik90.prefmanager.PrefManager;
 import com.zbiyikli.sgetter.SourceGetter;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class Play implements Runnable{
 
@@ -44,19 +52,19 @@ public class Play implements Runnable{
     private final PrefManager prefs;
     Context context;
     String[] sources;
-    private long episode;
+    private MiniEpisode episode_anim;
+    private int episode;
     private final SourceGetter sGetter;
     private final LowCostVideo xGetter;
     DialogFragment newFragment;
     private final FragmentManager fragmentManager;
     private MyAnimeListAPIService api;
-    private int malid;
     private ProgressDialog pd;
 
     public Play(Context context, FragmentManager manager, MiniEpisode episode) {
         this.context = context;
-        this.malid = episode.getAnimeID();
-        this.episode = Long.parseLong(episode.getEpisode());
+        this.episode_anim = episode;
+        this.episode = Integer.parseInt(episode.getEpisode());
         this.sources = episode.getLink().split(",");
         this.fragmentManager = manager;
         this.sGetter = new SourceGetter(context);
@@ -70,6 +78,11 @@ public class Play implements Runnable{
 
     @Override
     public void run() {
+
+        if ( new DownloadManager_v2(context).isAnimeDownloaded(episode_anim)){
+            startVideoOffline();
+        }
+        else
         searchlinks();
     }
 
@@ -173,7 +186,7 @@ public class Play implements Runnable{
                         }
 
                          @Override
-                         public void onCancelOrDismiss() { }
+                         public void onCancelOrDismiss() {   hidePD(); }
                      });
                     newFragment.show(fragmentManager,"DATA");
 
@@ -292,7 +305,7 @@ public class Play implements Runnable{
 
             @Override
             public void onCancelOrDismiss() {
-
+                hidePD();
             }
         });
 
@@ -304,8 +317,8 @@ public class Play implements Runnable{
         hidePD();
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.parse(file), "video/mp4");
-
-
+        updateanime();
+        Log.d("EPISODE SEEING", String.valueOf(episode));
 
         try {
             context.startActivity(intent);
@@ -313,15 +326,40 @@ public class Play implements Runnable{
         catch (Exception ignore){}
     }
 
-    void updateanime(){
-        if (prefs.getBoolean("isLogged",false)){
-
-            if (episode == (int) episode){
-                api.updatemyanime(malid,null,null,null, (int) episode,null,null,null,null,null);
-            }
-
+    private void startVideoOffline() {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(new DownloadManager_v2(context).getFileUri(episode_anim), "video/mp4");
+        updateanime();
+        Log.d("EPISODE SEEING", String.valueOf(episode));
+        try {
+            context.startActivity(intent);
         }
-        else {
+        catch (Exception ignored){}
+    }
+
+    void updateanime(){
+
+        if (context instanceof AnimeActivity) {
+            if (((AnimeActivity) context).getEpisode() >= episode) return;
+            int malid = ((AnimeActivity) context).getMalid();
+            ((AnimeActivity) context).setEpisodeAndUpdate(episode);
+            if (prefs.getBoolean("isLogged",false)){
+                try {
+                    api.updatemyanime(malid,null,null,null, episode,null,null,null,null,null).enqueue(new retrofit2.Callback<AnimeUpdate>() {
+                        @Override
+                        public void onResponse(@NotNull Call<AnimeUpdate> call, @NotNull Response<AnimeUpdate> response) {
+                            Log.d("Update online", "DA");
+                        }
+
+                        @Override
+                        public void onFailure(@NotNull Call<AnimeUpdate> call, @NotNull Throwable t) {
+                            Log.d("Update online", "ERROR");
+                        }
+                    });
+                }
+                catch (Exception e){e.printStackTrace();}
+
+            }
         }
     }
 

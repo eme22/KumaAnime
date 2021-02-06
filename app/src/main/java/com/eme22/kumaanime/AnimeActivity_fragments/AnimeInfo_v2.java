@@ -1,7 +1,5 @@
 package com.eme22.kumaanime.AnimeActivity_fragments;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,23 +7,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.eme22.kumaanime.AnimeActivity;
-import com.eme22.kumaanime.AnimeActivity_fragments.Utils.AnimeFetcher_v2;
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.anime_details.AnimeDetails;
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.anime_details.MyListStatus;
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.anime_update.AnimeUpdate;
@@ -33,9 +29,7 @@ import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.models.MiniAn
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.io.MyAnimeListAPIAdapter;
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.io.MyAnimeListAPIService;
 import com.eme22.kumaanime.AppUtils.AnimeObjects.GeneralAnime;
-import com.eme22.kumaanime.AppUtils.Callback;
 import com.eme22.kumaanime.AppUtils.Mods.OnItemClickSpinner;
-import com.eme22.kumaanime.GeneralAnimeActivity;
 import com.eme22.kumaanime.MainActivity_fragments.util.TaskRunner;
 import com.eme22.kumaanime.R;
 import com.tingyik90.prefmanager.PrefManager;
@@ -45,12 +39,10 @@ import org.jetbrains.annotations.NotNull;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class AnimeInfo extends Fragment {
+public class AnimeInfo_v2 extends Fragment implements AnimeActivity.AnimeActivityLoad {
 
     private MiniAnime anime;
     private final TaskRunner task = new TaskRunner();
-    //private Spinner status;
-    //private Spinner punctuation;
     private OnItemClickSpinner status;
     private OnItemClickSpinner punctuation;
     private ArrayAdapter<String> a;
@@ -76,93 +68,71 @@ public class AnimeInfo extends Fragment {
     private SwitchCompat rewatching;
     private CardView apply_changes;
     private SwipeRefreshLayout swipe_general;
-    private NestedScrollView sv;
+    private ScrollView sv;
     private PrefManager prefs;
     private MyAnimeListAPIService api;
     private int animeID = 0;
-    boolean isDataLoaded = false;
+    private static final String nullinfo = "Este anime aún no esta en La base de Datos de MAL.\nPuede ser que aún no haya salido aún.\n";
 
-    UserEpisodeCallback episodesCallback;
-
-    @Override
-    public void onAttach(@NonNull @NotNull Context context) {
-        super.onAttach(context);
-
-        try {
-            episodesCallback = (UserEpisodeCallback) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + " must implement UserEpisodeCallback");
-        }
-    }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        anime = ((AnimeActivity) requireActivity()).getGeneralAnime();
         prefs = new PrefManager(requireContext());
         if (prefs.getBoolean("isLogged",false)){
             api = MyAnimeListAPIAdapter.getApiServiceWithAuth(requireContext());
         }
         else api = null;
-
-
     }
 
+    @Nullable
+    @org.jetbrains.annotations.Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull @NotNull LayoutInflater inflater, @Nullable @org.jetbrains.annotations.Nullable ViewGroup container, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_anime_info, container, false);
 
         initView(v);
         init();
-        init2();
-        initListeners();
-
+        if (((AnimeActivity) requireActivity()).isLoaded()) initData();
         return v;
     }
 
     private void initListeners() {
-        status.setOnItemClickListener((parent, view, position, id) -> {
-            if (isDataLoaded) {  statuslivechange(position);}
-        });
-        punctuation.setOnItemClickListener((parent, view, position, id) -> {
-            if (isDataLoaded) { punctuationlivechange(position);}
-        });
-        rewatching.setOnClickListener(v -> {
-            if (isDataLoaded) {  rewatchinglivechange(rewatching.isChecked());}
-        });
+        status.setOnItemClickListener((parent, view, position, id) -> statuslivechange(position));
+        punctuation.setOnItemClickListener((parent, view, position, id) -> punctuationLiveChange(position));
+        rewatching.setOnCheckedChangeListener((buttonView, isChecked) -> watchingLiveChange(isChecked));
+        //rewatching.setOnClickListener(v -> rewatchinglivechange(rewatching.isChecked()));
     }
 
-    private void rewatchinglivechange(boolean checked) {
-        if (checked) api.updatemyanime(animeID,null,checked, null,null,null,null,null,null,null).enqueue(new retrofit2.Callback<AnimeUpdate>() {
-            @Override
-            public void onResponse(Call<AnimeUpdate> call, Response<AnimeUpdate> response) {
-
-            }
-
-            @Override
-            public void onFailure(Call<AnimeUpdate> call, Throwable t) {
-
-            }
-        });
-    }
-
-    private void punctuationlivechange(int position) {
+    private void punctuationLiveChange(int position) {
         Log.d("POSITION", String.valueOf(position));
         Log.d("ANIME ID", String.valueOf(animeID));
         api.updatemyanime(animeID,null,null, 10-position,null,null,null,null,null,null).enqueue(new retrofit2.Callback<AnimeUpdate>() {
             @Override
-            public void onResponse(Call<AnimeUpdate> call, Response<AnimeUpdate> response) {
-                Log.d("PUNCT CHANGE", String.valueOf(response.code()));
+            public void onResponse(@NotNull Call<AnimeUpdate> call, @NotNull Response<AnimeUpdate> response) {
+                Log.d("PUNCTUATION CHANGE", String.valueOf(response.code()));
                 if (response.body() != null) {
-                    Log.d("PUNCT CHANGE", response.body().toString());
+                    Log.d("PUNCTUATION CHANGE", response.body().toString());
                 }
             }
 
             @Override
-            public void onFailure(Call<AnimeUpdate> call, Throwable t) {
+            public void onFailure(@NotNull Call<AnimeUpdate> call, @NotNull Throwable t) {
                 Log.d("STATUS CHANGE", String.valueOf(t.getMessage()));
+            }
+        });
+    }
+
+    private void watchingLiveChange(boolean checked) {
+        if (checked) api.updatemyanime(animeID,null,checked, null,null,null,null,null,null,null).enqueue(new retrofit2.Callback<AnimeUpdate>() {
+            @Override
+            public void onResponse(@NotNull Call<AnimeUpdate> call, @NotNull Response<AnimeUpdate> response) {
+
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<AnimeUpdate> call, @NotNull Throwable t) {
+
             }
         });
     }
@@ -183,7 +153,7 @@ public class AnimeInfo extends Fragment {
         }
         api.updatemyanime(animeID,detailsStatus,null, null,null,null,null,null,null,null).enqueue(new retrofit2.Callback<AnimeUpdate>() {
             @Override
-            public void onResponse(Call<AnimeUpdate> call, Response<AnimeUpdate> response) {
+            public void onResponse(@NotNull Call<AnimeUpdate> call, @NotNull Response<AnimeUpdate> response) {
                 Log.d("STATUS CHANGE", String.valueOf(response.code()));
                 if (response.body() != null) {
                     Log.d("STATUS CHANGE", response.body().toString());
@@ -191,7 +161,7 @@ public class AnimeInfo extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<AnimeUpdate> call, Throwable t) {
+            public void onFailure(@NotNull Call<AnimeUpdate> call, @NotNull Throwable t) {
                 Log.d("STATUS CHANGE", String.valueOf(t.getMessage()));
             }
         });
@@ -199,10 +169,8 @@ public class AnimeInfo extends Fragment {
 
     }
 
-
     void initView(View v){
         //INITIALIZERS
-
         status = v.findViewById(R.id.anime_info_status_selection);
         punctuation = v.findViewById(R.id.anime_info_punctuation_selection);
         a = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.anime_states));
@@ -229,133 +197,37 @@ public class AnimeInfo extends Fragment {
         apply_changes = v.findViewById(R.id.apply_changes_info);
         swipe_general = v.findViewById(R.id.general_info_layout);
         sv = v.findViewById(R.id.anime_info_nested_scrollview);
-
+        sv.setVisibility(View.GONE);
     }
 
     void init(){
+
+        ((AnimeActivity) requireActivity()).setAnimeinfo(this);
+
         a.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         b.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         status.setAdapter(a);
         punctuation.setAdapter(b);
         anime_info_log2.setVisibility(View.GONE);
         apply_changes.setVisibility(View.GONE);
-        swipe_general.setVisibility(View.GONE);
+        //swipe_general.setVisibility(View.GONE);
         swipe_general.setRefreshing(true);
     }
 
-    private void init2() {
-        if(prefs.getBoolean("isLogged",false)){
-/*
-            task.executeAsync(new AnimeFetcher_v2(anime, requireContext(), new Callback() {
-                @Override
-                public void onSuccess(Object o) {
-                    AnimeFetcher_v2.AnimeDetailsDataset dataset = (AnimeFetcher_v2.AnimeDetailsDataset) o;
-                    GeneralAnime result = dataset.getData1();
-                    AnimeDetails details = result.getDetails();
-                    String desc2 = result.getDesc_2();
-                    animeID = details.getId();
-                    if (details.getId()==-1) requireActivity().runOnUiThread(() -> UpdateUiForNullAnime(desc2));
-                    else requireActivity().runOnUiThread(() -> updateUI(details,desc2));
-                    isDataLoaded = true;
+    void initData(){
 
-                }
+        if(prefs.getBoolean("isLogged",false)) {
 
-                @Override
-                public void onError(Exception e) {
+            GeneralAnime result = ((AnimeActivity) requireActivity()).getResult();
+            AnimeDetails details = result.getDetails();
+            String desc2 = result.getDesc_2();
+            animeID = details.getId();
+            if (details.getId() == -1)
+                requireActivity().runOnUiThread(() -> UpdateUiForNullAnime(desc2));
+            else requireActivity().runOnUiThread(() -> updateUI(details, desc2));
 
-                }
-            }));
+            sv.setVisibility(View.VISIBLE);
 
- */
-
-
-
-            /*
-            task.executeAsync(new AnimFetcher(requireContext(),anime), result -> {
-                assert result != null;
-                AnimeDetails details = result.getDetails();
-                String desc2 = result.getDesc_2();
-                try {
-                    type.setText(details.getMediaType());
-                }
-                catch (NullPointerException ignored){}
-
-                mal_desc.setChecked(true);
-                try {
-                    desc.setText(details.getSynopsis());
-                }
-                catch (NullPointerException e){
-                    desc.setText("No disponible");
-                }
-
-                mal_desc.setOnCheckedChangeListener((compoundButton, b1) -> {
-                    if (b1) desc.setText(details.getSynopsis());
-                    else desc.setText(desc2);
-                });
-                try {
-                    String text = details.getAverageEpisodeDuration()/60+" minutos";
-                    duracion.setText(text);
-                }
-                catch (NullPointerException e){
-                    duracion.setText("No disponible");
-                }
-
-                MyListStatus status_2 = details.getMyListStatus();
-                String detailsStatus;
-                try {
-                   detailsStatus  = status_2.getStatus();
-                }
-                catch (NullPointerException e){
-                    detailsStatus = "Ninguno";
-                }
-
-                switch (detailsStatus){
-                    case "watching": detailsStatus = "Viendo";break;
-                    case "completed": detailsStatus = "Completado";break;
-                    case "on_hold": detailsStatus = "En Espera";break;
-                    case "dropped": detailsStatus = "Dropeados";break;
-                    case "plan_to_watch": detailsStatus = "Planeando Ver";break;
-                }
-                status.setSelection(a.getPosition(detailsStatus));
-
-                try {
-                  punctuation.setSelection(10-status_2.getScore());
-                }
-                catch (NullPointerException ignored){
-                    punctuation.setSelection(10);
-                }
-
-
-                try {
-                    seen_eps.setText(String.valueOf(status_2.getNumEpisodesWatched()));
-                }
-                catch (NullPointerException e){
-                    seen_eps.setText("0");
-                }
-
-                try {
-                    if(details.getNumEpisodes()>0)
-                    eps.setText(String.valueOf(details.getNumEpisodes()));
-                }
-                catch (NullPointerException ignored){}
-                try{
-                    bar.setRating(details.getMean().floatValue()/2);
-                }catch (NullPointerException ignored){
-                    bar.setRating(0f);
-                }
-
-                try {
-                    day.setText(details.getBroadcast().getDayOfTheWeek());
-                }
-                catch (NullPointerException ignored){}
-
-                year.setText(String.valueOf(details.getStartSeason().getYear()));
-                if (details.getRating()!=null)
-                parental.setText(details.getRating());
-                swipe_general.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.GONE);
-            });
-             */
             more_log.setOnClickListener(view -> {
                 anime_info_log2.setVisibility(View.VISIBLE);
                 more_log.setVisibility(View.GONE);
@@ -365,18 +237,29 @@ public class AnimeInfo extends Fragment {
                 anime_info_log2.setVisibility(View.GONE);
                 more_log.setVisibility(View.VISIBLE);
             });
+
+            initListeners();
+
         }
-        else {
+         else {
             more_log.setVisibility(View.GONE);
             anime_info_log1.setVisibility(View.GONE);
             anime_info_log2.setVisibility(View.GONE);
         }
+
     }
 
     void updateUI(AnimeDetails details, String desc2){
-        int episode = details.getMyListStatus().getNumEpisodesWatched() != null ? details.getMyListStatus().getNumEpisodesWatched() : 0;
+        int episode;
+        try {
+            episode = details.getMyListStatus().getNumEpisodesWatched();
+        }
+        catch (NullPointerException e){
+            episode = 0;
+        }
+
+
         Log.d("EPISODE SEEN:" , String.valueOf(episode));
-        sendEpisode(episode);
         try {
             type.setText(details.getMediaType());
         }
@@ -402,11 +285,6 @@ public class AnimeInfo extends Fragment {
         }
 
         MyListStatus status_2 = details.getMyListStatus();
-
-        try {
-            episodesCallback.setEpisode(status_2.getNumEpisodesWatched());
-        }
-        catch (NullPointerException ignore){}
 
 
         String detailsStatus;
@@ -470,31 +348,18 @@ public class AnimeInfo extends Fragment {
     }
 
     void UpdateUiForNullAnime(String desc2) {
-        sendEpisode(-1);
         Log.d("Animeinfo: ", "NULLANIME");
-        String nullinfo = "Este anime aún no esta en La base de Datos de MAL.\nPuede ser que aún no haya salido aún.\n";
         mal_desc.setVisibility(View.GONE);
         more_log.setVisibility(View.GONE);
         anime_info_log1.setVisibility(View.GONE);
         anime_info_log2.setVisibility(View.GONE);
-        desc.setText(nullinfo + desc2);
+        desc.setText(getString(R.string.description_not_found, nullinfo, desc2));
         swipe_general.setVisibility(View.VISIBLE);
         swipe_general.setRefreshing(false);
     }
 
-    private void sendEpisode(long episode) {
-        Intent intent = new Intent("EPISODE_SEEN_SEND");
-        intent.putExtra("EPISODE_SEEN",episode);
-        LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent);
+    @Override
+    public void loadData() {
+        initData();
     }
-
-    public interface UserEpisodeCallback{
-
-         long getEpisode();
-         void setEpisode(long episode);
-
-    }
-
-
-
 }

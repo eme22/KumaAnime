@@ -7,11 +7,12 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.eme22.kumaanime.AnimeActivity_fragments.AnimeEpisodes;
 import com.eme22.kumaanime.AnimeActivity_fragments.AnimeInfo;
+import com.eme22.kumaanime.AnimeActivity_fragments.AnimeInfo_v2;
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.models.MiniAnime;
 
-public class Anime_Page_Adapter extends FragmentStateAdapter {
+public class animePageAdapter extends FragmentStateAdapter {
 
-    public Anime_Page_Adapter(FragmentActivity fm) {
+    public animePageAdapter(FragmentActivity fm) {
         super(fm);
     }
 
@@ -21,7 +22,7 @@ public class Anime_Page_Adapter extends FragmentStateAdapter {
         if (position == 1) {
             return new AnimeEpisodes();
         }
-        return new AnimeInfo();
+        return new AnimeInfo_v2();
     }
 
     @Override

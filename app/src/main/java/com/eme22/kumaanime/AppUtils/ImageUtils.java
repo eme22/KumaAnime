@@ -1,11 +1,8 @@
 package com.eme22.kumaanime.AppUtils;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 
-import com.eme22.kumaanime.AnimeActivity_fragments.Utils.downloader.DownloadManager;
 import com.eme22.kumaanime.App;
-import com.squareup.picasso.Cache;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;

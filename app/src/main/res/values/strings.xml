@@ -127,6 +127,8 @@
     <string name="force_seen">Forzar Visto</string>
     <string name="delete">Borrar</string>
     <string name="are_you_sure">¿Estas seguro? Esto eliminara todos los elementos</string>
+    <string name="description_not_found">%1$s%2$s</string>
+    <string name="key_maximum_notification">Maximo de notificaciones</string>
 
     <string-array name="iconName">
         <item>Cian</item>

@@ -48,6 +48,7 @@ public class PlayFragment_v2 extends DialogFragment {
     String[] links;
     String[] labels;
     PlayObserver callback;
+    private AlertDialog.Builder builder;
 
     public PlayFragment_v2(PlayObserver callback) {
         this.callback = callback;
@@ -81,7 +82,7 @@ public class PlayFragment_v2 extends DialogFragment {
     }
 
     private Dialog work() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder = new AlertDialog.Builder(requireContext());
         builder.setTitle(title);
         Log.d("Nombres:" , String.valueOf(labels.length));
         Log.d("Servers", String.valueOf(links.length));
@@ -97,6 +98,8 @@ public class PlayFragment_v2 extends DialogFragment {
         return builder.create();
 
     }
+
+
 
 
 }

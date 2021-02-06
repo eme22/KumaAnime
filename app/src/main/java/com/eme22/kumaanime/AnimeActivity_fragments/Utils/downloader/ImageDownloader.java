@@ -1,5 +1,6 @@
 package com.eme22.kumaanime.AnimeActivity_fragments.Utils.downloader;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.eme22.kumaanime.AppUtils.FileUtils;
@@ -19,14 +20,16 @@ import okhttp3.ResponseBody;
 
 public class ImageDownloader implements Runnable{
 
-    PermissionActivity context;
+    Context context;
     MiniAnimeTable_Repo repo;
     private final int animeID;
+    DownloadManager_v2 managerV2;
     ImageDownloaderCallback callback;
 
-    public ImageDownloader(PermissionActivity activity, int animeID, ImageDownloaderCallback callback) {
-    this.context = activity;
-    this.repo = new MiniAnimeTable_Repo(activity);
+    public ImageDownloader(Context context, int animeID, ImageDownloaderCallback callback) {
+    this.context = context;
+    this.repo = new MiniAnimeTable_Repo(context.getApplicationContext());
+    this.managerV2 = new DownloadManager_v2(context);
     this.animeID = animeID;
     this.callback = callback;
     }
@@ -70,13 +73,13 @@ public class ImageDownloader implements Runnable{
 
             String finalname = StringUtils.FormatFile(animeID,"png");
 
-            File finallocation = new File(DownloadManager.getInstance(context).getAnime(animeID) , finalname);
+            File finallocation = new File(managerV2.getAnime(animeID) , finalname);
 
             // rename file but cut off .tmp
 
             boolean success = FileUtils.moveFile(tmpFile,finallocation);
             if (!success) {
-                Log.e(DownloadManager.TAG,"IMAGE DOWNLOAD FAILED");
+                Log.e(DownloadManager_v2.TAG,"IMAGE DOWNLOAD FAILED");
                 throw new Exception();
             }
             else callback.onSuccess();

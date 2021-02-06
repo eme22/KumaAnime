@@ -2,11 +2,19 @@ package com.eme22.kumaanime.AppUtils;
 
 import java.security.SecureRandom;
 import java.text.Format;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Formatter;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
+
+import kotlin.Pair;
+import okhttp3.Headers;
+import okhttp3.internal.http2.Header;
 
 public class StringUtils {
 
@@ -93,5 +101,22 @@ public class StringUtils {
             sb.append(c);
         }
         return Integer.parseInt(sb.toString());
+    }
+
+    public static Headers getHeaders(List<Map.Entry<String,String>> pairList){
+        Headers.Builder b = new Headers.Builder();
+        for (Map.Entry<String, String> a : pairList) {
+            b.add(a.getKey(),a.getValue());
+        }
+        return b.build();
+    }
+
+    public static List<Map.Entry<String,String>> getHeadersParcel(Headers headers){
+        List<Map.Entry<String,String>> as = new ArrayList<>();
+        for (Iterator<Pair<String, String>> it = headers.iterator(); it.hasNext(); ) {
+            Pair<String, String> h = it.next();
+            as.add(new AbstractMap.SimpleImmutableEntry<>(h.getFirst(), h.getSecond()));
+        }
+        return as;
     }
 }

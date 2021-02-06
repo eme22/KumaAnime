@@ -23,15 +23,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.eme22.kumaanime.AnimeActivityOffline;
 import com.eme22.kumaanime.AnimeActivity_fragments.Utils.OfflineFetcher;
-import com.eme22.kumaanime.AnimeActivity_fragments.Utils.downloader.DownloadManager;
+import com.eme22.kumaanime.AnimeActivity_fragments.Utils.downloader.DownloadManager_v2;
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.models.MiniAnime;
 import com.eme22.kumaanime.AppUtils.FileUtils;
 import com.eme22.kumaanime.GeneralAnimeActivity;
 import com.eme22.kumaanime.MainActivity;
 import com.eme22.kumaanime.MainActivity_fragments.adapters.OfflineAnimeAdapter_v3;
 import com.eme22.kumaanime.MainActivity_fragments.util.TaskRunner;
-import com.eme22.kumaanime.PermissionActivity;
 import com.eme22.kumaanime.R;
 
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +53,7 @@ public class DownloadedAnimeFragment extends Fragment {
 
     ArrayList<MiniAnime> deleteList = new ArrayList<>();
     private Toolbar toolbar;
-    private DownloadManager manager;
+    private DownloadManager_v2 manager;
 
     public DownloadedAnimeFragment() {
         setHasOptionsMenu(true);
@@ -77,7 +77,7 @@ public class DownloadedAnimeFragment extends Fragment {
     }
 
     private void initView(View v) {
-        manager = DownloadManager.getInstance((PermissionActivity) requireActivity());
+        manager =new DownloadManager_v2(requireContext());
         recyclerView = v.findViewById(R.id.animelist);
         refreshLayout = v.findViewById(R.id.swipe_refresh_animelist);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false);
@@ -85,7 +85,7 @@ public class DownloadedAnimeFragment extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         toolbar = ((MainActivity) requireActivity()).toolbar;
 
-        adapter = new OfflineAnimeAdapter_v3(this,DownloadManager.getInstance((PermissionActivity) requireActivity()), anime -> {
+        adapter = new OfflineAnimeAdapter_v3(this,new DownloadManager_v2(requireContext()), anime -> {
 
             if (!isContextualEnabled){
                 startOfflineAnime(anime);
@@ -99,10 +99,18 @@ public class DownloadedAnimeFragment extends Fragment {
         refreshLayout.setOnRefreshListener(this::refreshview);
     }
 
+    /*
     private void startOfflineAnime(MiniAnime anime) {
         Intent intent = new Intent(getActivity(), GeneralAnimeActivity.class);
         intent.putExtra(GeneralAnimeActivity.EXTRA_ANIME, (Parcelable) anime);
         intent.putExtra(GeneralAnimeActivity.EXTRA_ACTION,true);
+        startActivity(intent);
+    }
+    */
+
+    private void startOfflineAnime(MiniAnime anime) {
+        Intent intent = new Intent(getActivity(), AnimeActivityOffline.class);
+        intent.putExtra(GeneralAnimeActivity.EXTRA_ANIME, (Parcelable) anime);
         startActivity(intent);
     }
 
@@ -122,7 +130,7 @@ public class DownloadedAnimeFragment extends Fragment {
 
 
         adapter = null;
-        adapter = new OfflineAnimeAdapter_v3(this,DownloadManager.getInstance((PermissionActivity) requireActivity()), anime -> {
+        adapter = new OfflineAnimeAdapter_v3(this,new DownloadManager_v2(requireContext()), anime -> {
 
             if (!isContextualEnabled){
                 startOfflineAnime(anime);
@@ -255,7 +263,4 @@ public class DownloadedAnimeFragment extends Fragment {
     }
 
 
-    public interface IOnBackPressed {
-        boolean onBackPressed();
-    }
 }

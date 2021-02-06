@@ -31,6 +31,11 @@
             android:name=".Services.DownloadService"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <service
+            android:name=".Services.Downloads.DownloadService_v2"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
         <service
             android:name=".Services.AnimeManager"
             android:enabled="true"
@@ -39,6 +44,8 @@
 
         <activity android:name=".MainActivityOffline" />
         <activity android:name=".GeneralAnimeActivity" />
+        <activity android:name=".AnimeActivity" />
+        <activity android:name=".AnimeActivityOffline" />
 
         <service android:name=".Services.DatabaseFiller" />
         <service

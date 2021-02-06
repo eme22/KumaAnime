@@ -17,6 +17,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
+import com.eme22.kumaanime.AnimeActivity_fragments.AnimeEpisodes;
 import com.eme22.kumaanime.AppUtils.AnimeObjects.episodes.MiniEpisode;
 import com.eme22.kumaanime.AppUtils.ImageUtils;
 import com.eme22.kumaanime.R;
@@ -29,7 +30,6 @@ public class EpisodeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private final int VIEW_TYPE_ITEM_INSIDE = 0;
     private final int TYPE;
     final OnItemClicked listener;
-    long lastviewed = -1;
     public List<MiniEpisode> mItemList;
 
 
@@ -38,14 +38,6 @@ public class EpisodeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.listener = listener;
         this.mItemList = new ArrayList<>();
     }
-
-
-    public void setViewed(long pos){
-        if (TYPE != 0) return;
-        //if (!(pos <  mItemList.size())) throw new IndexOutOfBoundsException();
-        lastviewed = pos;
-    }
-
 
     public void add(MiniEpisode mc) {
         mItemList.add(mc);
@@ -121,40 +113,33 @@ public class EpisodeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         //Glide.with(holder.preview.getContext()).load(miniEpisode.getMainPicture().getMedium()).placeholder(new CircularProgressDrawable(holder.preview.getContext())).error(R.drawable.no_preview_2).into(holder.preview);
         ImageUtils.getSharedInstance().load(miniEpisode.getMainPicture().getMedium()).placeholder(new CircularProgressDrawable(holder.preview.getContext())).resize(0,100).error(R.drawable.no_preview_2).into(holder.preview);
         holder.title.setText(holder.itemView.getContext().getString(R.string.episode,miniEpisode.getEpisode()));
-        if (position<=lastviewed) holder.seen.setVisibility(View.VISIBLE);
+        if (miniEpisode.isViewed()) holder.seen.setVisibility(View.VISIBLE);
         else holder.seen.setVisibility(View.GONE);
 
-        holder.itemOptions.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        holder.itemOptions.setOnClickListener(view -> {
 
-                //creating a popup menu
-                PopupMenu popup = new PopupMenu(holder.itemOptions.getContext(), holder.itemOptions);
-                //inflating menu from xml resource
-                popup.inflate(R.menu.episode_menu);
-                //adding click listener
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.episode_download:
-                                listener.onDownloadClick(miniEpisode);
-                                return true;
-                            case R.id.episode_status:
-                                listener.onForceStatusUpdate(miniEpisode);
-                                return true;
-                            case R.id.episode_cast:
-                                listener.onCastClick(miniEpisode);
-                                return true;
-                            default:
-                                return false;
-                        }
-                    }
-                });
-                //displaying the popup
-                popup.show();
+            //creating a popup menu
+            PopupMenu popup = new PopupMenu(holder.itemOptions.getContext(), holder.itemOptions);
+            //inflating menu from xml resource
+            popup.inflate(R.menu.episode_menu);
+            //adding click listener
+            popup.setOnMenuItemClickListener(item -> {
+                int itemId = item.getItemId();
+                if (itemId == R.id.episode_download) {
+                    listener.onDownloadClick(miniEpisode);
+                    return true;
+                } else if (itemId == R.id.episode_status) {
+                    listener.onForceStatusUpdate(miniEpisode);
+                    return true;
+                } else if (itemId == R.id.episode_cast) {
+                    listener.onCastClick(miniEpisode);
+                    return true;
+                }
+                return false;
+            });
+            //displaying the popup
+            popup.show();
 
-            }
         });
 
     }
@@ -265,7 +250,8 @@ public class EpisodeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             //});
 
         }
-    }
+
+     }
 
 
 

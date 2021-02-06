@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,11 +13,9 @@ import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
-import com.eme22.kumaanime.AnimeActivity_fragments.Utils.downloader.DownloadManager;
+import com.eme22.kumaanime.AnimeActivity_fragments.Utils.downloader.DownloadManager_v2;
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.models.MiniAnime;
-import com.eme22.kumaanime.AppUtils.Callback;
 import com.eme22.kumaanime.AppUtils.ImageUtils;
-import com.eme22.kumaanime.AppUtils.NewsObject.Datum;
 import com.eme22.kumaanime.R;
 
 import org.jetbrains.annotations.NotNull;
@@ -32,18 +29,16 @@ import java.util.List;
 public class OfflineAnimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     private final OnItemClicked listener;
-    private List<MiniAnime> animes;
-
-    File location;
+    private final DownloadManager_v2 managerV2;
+    private final List<MiniAnime> animes;
 
     private boolean isLoadingAdded = false;
 
-    public OfflineAnimeAdapter(OnItemClicked listener) {
+    public OfflineAnimeAdapter(Context context,OnItemClicked listener) {
         this.listener = listener;
-        animes = new ArrayList<>();
-        if (DownloadManager.getInstance() != null) {
-            location = DownloadManager.getInstance().getMAIN_DIR();
-        }
+        this.managerV2 = new DownloadManager_v2(context);
+        this.animes = new ArrayList<>();
+
     }
 
     @NonNull
@@ -69,7 +64,7 @@ public class OfflineAnimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
             Context imagecontext = ((AnimeViewHolder) holder).preview.getContext();
-            File image = new File(location, String.valueOf(anime.getId()));
+            File image = managerV2.getImage(anime.getId());
             Uri imageuri = FileProvider.getUriForFile(imagecontext, imagecontext.getApplicationContext().getPackageName() + ".provider", image);
 
             try {

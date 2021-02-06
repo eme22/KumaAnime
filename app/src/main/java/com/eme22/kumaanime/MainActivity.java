@@ -21,7 +21,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.eme22.kumaanime.AnimeActivity_fragments.Utils.downloader.DownloadManager;
+import com.eme22.kumaanime.AnimeActivity_fragments.Utils.downloader.DownloadManager_v2;
 import com.eme22.kumaanime.AppUtils.OtherUtils;
 import com.eme22.kumaanime.AppUtils.Theming;
 import com.eme22.kumaanime.MainActivity_fragments.DownloadedAnimeFragment;
@@ -266,7 +266,7 @@ public class MainActivity extends PermissionActivity {
     };
 
     private void initDownloads(){
-        DownloadManager.getInstance(this).init();
+        new DownloadManager_v2(this);
     }
 
 

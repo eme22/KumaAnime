@@ -5,7 +5,7 @@ import android.view.View;
 
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
-import com.eme22.kumaanime.AnimeActivity_fragments.Utils.downloader.DownloadManager;
+import com.eme22.kumaanime.AnimeActivity_fragments.Utils.downloader.DownloadManager_v2;
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.models.MiniAnime;
 import com.eme22.kumaanime.AppUtils.ImageUtils;
 import com.eme22.kumaanime.MainActivity_fragments.DownloadedAnimeFragment;
@@ -15,10 +15,10 @@ import com.squareup.picasso.Callback;
 @Deprecated
 public class OfflineAnimeAdapter_v2 extends AnimeAdapter_v4{
 
-    DownloadManager downloadManager;
+    DownloadManager_v2 downloadManager;
     DownloadedAnimeFragment downloadedAnimeFragment;
 
-    public OfflineAnimeAdapter_v2(DownloadedAnimeFragment context, DownloadManager downloadManager,OnItemClicked listener) {
+    public OfflineAnimeAdapter_v2(DownloadedAnimeFragment context, DownloadManager_v2 downloadManager,OnItemClicked listener) {
         super(0, listener);
         this.downloadedAnimeFragment = context;
         this.downloadManager = downloadManager;

@@ -19,9 +19,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.eme22.kumaanime.AnimeActivity;
 import com.eme22.kumaanime.AnimeActivity_fragments.Download;
 import com.eme22.kumaanime.AnimeActivity_fragments.Play;
-import com.eme22.kumaanime.AnimeActivity_fragments.PlayFragment;
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.models.MiniAnime;
 import com.eme22.kumaanime.AppUtils.AnimeObjects.episodes.MiniEpisode;
 import com.eme22.kumaanime.AppUtils.Callback;
@@ -84,7 +84,7 @@ public class NewAnimeFragment extends Fragment {
 
     @SuppressWarnings("unchecked")
     private void firstload(){
-        taskRunner.executeAsync(new NewAnimeFetcher_v3(requireContext(), new Callback() {
+        taskRunner.executeAsync(new NewAnimeFetcher_v3(requireContext(), new com.eme22.kumaanime.AppUtils.Callback() {
             @Override
             public void onSuccess(Object o) {
                 NewAnimeFetcher_v3.Tuple<ArrayList<MiniAnime>,ArrayList<MiniEpisode>> result = (NewAnimeFetcher_v3.Tuple<ArrayList<MiniAnime>, ArrayList<MiniEpisode>>) o;
@@ -177,13 +177,7 @@ public class NewAnimeFragment extends Fragment {
         recyclerView2.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false));
         recyclerView2.setNestedScrollingEnabled(false);
         recyclerView.refreshDrawableState();
-        mAdapter2 = new AnimeAdapter_v4(1, anime -> {
-
-            Intent intent = new Intent(NewAnimeFragment.this.requireActivity(), GeneralAnimeActivity.class);
-            intent.putExtra(GeneralAnimeActivity.EXTRA_ANIME, (Parcelable) anime);
-            NewAnimeFragment.this.startActivity(intent);
-
-        });
+        mAdapter2 = new AnimeAdapter_v4(1, this::loadAnime);
         mAdapter = new EpisodeAdapter(1, new EpisodeAdapter.OnItemClicked() {
 
 
@@ -233,14 +227,17 @@ public class NewAnimeFragment extends Fragment {
                     return;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
-                taskRunner.executeAsync(new NewAnimeFragment.SearchAnimeAsync(requireContext(), anime.getAnimeID(), new Callback() {
+                taskRunner.executeAsync(new NewAnimeFragment.SearchAnimeAsync(requireContext(), anime.getAnimeID(), new NewAnimeFragment.Callback() {
                     @Override
-                    public void onSuccess(Object o) {
-                        MiniAnime gasp = (MiniAnime) o;
+                    public void onSuccess(MiniAnime o) {
+                        /*
                         Intent intent = new Intent(NewAnimeFragment.this.getActivity(), GeneralAnimeActivity.class);
-                        intent.putExtra(GeneralAnimeActivity.EXTRA_ANIME, (Parcelable) gasp);
+                        intent.putExtra(GeneralAnimeActivity.EXTRA_ANIME, (Parcelable) o);
                         NewAnimeFragment.this.startActivity(intent);
+                        */
+                        loadAnime(o);
                     }
+
 
                     @Override
                     public void onError(Exception e) {
@@ -256,10 +253,18 @@ public class NewAnimeFragment extends Fragment {
 
 
     }
+
+    private void loadAnime(MiniAnime anime) {
+        //Intent intent = new Intent(NewAnimeFragment.this.requireActivity(), GeneralAnimeActivity.class);
+        Intent intent = new Intent(NewAnimeFragment.this.requireActivity(), AnimeActivity.class);
+        intent.putExtra(GeneralAnimeActivity.EXTRA_ANIME, (Parcelable) anime);
+        NewAnimeFragment.this.startActivity(intent);
+    }
+
     @SuppressWarnings("unchecked")
     private void updateAnimes(){
 
-        taskRunner.executeAsync(new NewAnimeFetcher_v3(requireActivity().getApplication(), new Callback() {
+        taskRunner.executeAsync(new NewAnimeFetcher_v3(requireActivity().getApplication(), new com.eme22.kumaanime.AppUtils.Callback() {
             @Override
             public void onSuccess(Object o) {
                 NewAnimeFetcher_v3.Tuple<ArrayList<MiniAnime>,ArrayList<MiniEpisode>> result = (NewAnimeFetcher_v3.Tuple<ArrayList<MiniAnime>, ArrayList<MiniEpisode>>) o;
@@ -394,9 +399,9 @@ public class NewAnimeFragment extends Fragment {
 
         private final MiniAnimeTable_Repo repo;
         int DBid;
-        Callback callback;
+        NewAnimeFragment.Callback callback;
 
-        public SearchAnimeAsync(Context context, int DBid, Callback callback) {
+        public SearchAnimeAsync(Context context, int DBid, NewAnimeFragment.Callback callback) {
             this.repo = new MiniAnimeTable_Repo(context);
             this.DBid = DBid;
             this.callback = callback;
@@ -412,6 +417,11 @@ public class NewAnimeFragment extends Fragment {
             }
 
         }
+    }
+
+    private interface Callback {
+        void onSuccess(MiniAnime animes);
+        void onError(Exception e);
     }
 
 

@@ -5,46 +5,33 @@ import android.os.Parcelable;
 
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.models.Common.MainPicture;
 
-import java.io.Serializable;
-
-public class MiniEpisode implements Serializable,Parcelable {
+public class MiniEpisode implements Parcelable {
     private int animeID;
     private String name;
     private String episode;
     private MainPicture mainPicture;
     private String link;
+    private boolean viewed;
 
     public MiniEpisode() {
     }
 
-    public MiniEpisode(int animeID, String name, String episode, MainPicture mainPicture, String link) {
+    public MiniEpisode(int animeID, String name, String episode, MainPicture mainPicture, String link, boolean viewed) {
         this.animeID = animeID;
         this.name = name;
         this.episode = episode;
         this.mainPicture = mainPicture;
         this.link = link;
+        this.viewed = viewed;
     }
 
-
-    protected MiniEpisode(Parcel in) {
-        animeID = in.readInt();
-        name = in.readString();
-        episode = in.readString();
-        mainPicture = in.readParcelable(MainPicture.class.getClassLoader());
-        link = in.readString();
+    public int getAnimeID() {
+        return animeID;
     }
 
-    public static final Creator<MiniEpisode> CREATOR = new Creator<MiniEpisode>() {
-        @Override
-        public MiniEpisode createFromParcel(Parcel in) {
-            return new MiniEpisode(in);
-        }
-
-        @Override
-        public MiniEpisode[] newArray(int size) {
-            return new MiniEpisode[size];
-        }
-    };
+    public void setAnimeID(int animeID) {
+        this.animeID = animeID;
+    }
 
     public String getName() {
         return name;
@@ -78,13 +65,21 @@ public class MiniEpisode implements Serializable,Parcelable {
         this.link = link;
     }
 
-    public int getAnimeID() { return animeID; }
+    public boolean isViewed() {
+        return viewed;
+    }
 
-    public void setAnimeID(int animeID) { this.animeID = animeID; }
+    public void setViewed(boolean viewed) {
+        this.viewed = viewed;
+    }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    protected MiniEpisode(Parcel in) {
+        animeID = in.readInt();
+        name = in.readString();
+        episode = in.readString();
+        mainPicture = in.readParcelable(MainPicture.class.getClassLoader());
+        link = in.readString();
+        viewed = in.readByte() != 0;
     }
 
     @Override
@@ -94,5 +89,23 @@ public class MiniEpisode implements Serializable,Parcelable {
         dest.writeString(episode);
         dest.writeParcelable(mainPicture, flags);
         dest.writeString(link);
+        dest.writeByte((byte) (viewed ? 1 : 0));
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<MiniEpisode> CREATOR = new Creator<MiniEpisode>() {
+        @Override
+        public MiniEpisode createFromParcel(Parcel in) {
+            return new MiniEpisode(in);
+        }
+
+        @Override
+        public MiniEpisode[] newArray(int size) {
+            return new MiniEpisode[size];
+        }
+    };
 }
