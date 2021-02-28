@@ -74,7 +74,7 @@ public class AnimeActivity extends GeneralAnimeActivity_v2 {
 
                 @Override
                 public void onError(Exception e) {
-
+                    e.printStackTrace();
                 }
             }));
         }

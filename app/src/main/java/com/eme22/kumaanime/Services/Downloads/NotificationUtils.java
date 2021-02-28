@@ -22,13 +22,11 @@ public class NotificationUtils {
     private final Context context;
     private final MiniEpisodeOffline episode;
     private final int id;
-    private DownloadManager_v2 managerV2;
 
     public NotificationUtils(Context context, MiniEpisodeOffline episode) {
         this.context = context;
         this.episode = episode;
         this.id  = NotificationSettings.getNotificationId();
-        this.managerV2 = new DownloadManager_v2(context);
     }
 
     public void generateNotifcation(Intent intent){

@@ -21,11 +21,15 @@ import androidx.transition.TransitionInflater;
 
 import com.eme22.kumaanime.AppUtils.BypassCheck_v4;
 import com.eme22.kumaanime.AppUtils.ObscuredPreferences;
+import com.eme22.kumaanime.AppUtils.ObscuredPreferences_v2;
 import com.eme22.kumaanime.AppUtils.Theming;
 import com.eme22.kumaanime.MainActivity_fragments.util.TaskRunner;
 import com.eme22.kumaanime.SplashActivity_fragments.FirstLoadFragment;
 import com.eme22.kumaanime.SplashActivity_fragments.WebviewBypassFragment;
 import com.tingyik90.prefmanager.PrefManager;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 
 public class SplashActivity extends AppCompatActivity {
@@ -122,7 +126,17 @@ public class SplashActivity extends AppCompatActivity {
 
     private void init(){
         prefs = new PrefManager(this);
-        prefsenc = new ObscuredPreferences(this, this.getSharedPreferences("MAL_USERDATA", 0));
+        try
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                prefsenc = new ObscuredPreferences_v2(this, "MAL_USERDATA").getPreferences();
+            else prefsenc = new ObscuredPreferences(this, this.getSharedPreferences("MAL_USERDATA", 0));
+
+        } catch (GeneralSecurityException | IOException e)
+        {
+            e.printStackTrace();
+        }
+        //prefsenc = new ObscuredPreferences(this, this.getSharedPreferences("MAL_USERDATA", 0));
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
         ts = new TaskRunner();
         IntentFilter mIntentFilter = new IntentFilter();
@@ -147,13 +161,13 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void logcheck() {
-        if (prefsenc.getString("TOKEN",null) == null) prefs.putBoolean("isLogged", false);
+        if (prefsenc.getString("TOKEN","").isEmpty()) prefs.putBoolean("isLogged", false);
     }
 
     private boolean isFirstStart() {
 
         if (!prefs.getBoolean("isLogged", false)) {
-            if (prefsenc.getString("TOKEN", null) == null) {
+            if (prefsenc.getString("TOKEN", "").isEmpty()) {
                 prefs.putBoolean("FirstStart", true);
                 return true;
             } else return false;

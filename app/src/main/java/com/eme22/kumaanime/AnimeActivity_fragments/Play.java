@@ -52,12 +52,12 @@ public class Play implements Runnable{
     private final PrefManager prefs;
     Context context;
     String[] sources;
-    private MiniEpisode episode_anim;
+    MiniEpisode episode_anim;
     private int episode;
     private final SourceGetter sGetter;
     private final LowCostVideo xGetter;
     DialogFragment newFragment;
-    private final FragmentManager fragmentManager;
+    final FragmentManager fragmentManager;
     private MyAnimeListAPIService api;
     private ProgressDialog pd;
 

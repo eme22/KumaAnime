@@ -3,6 +3,7 @@ package com.eme22.kumaanime.Services;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,6 +13,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.eme22.kumaanime.AppUtils.AuthUtil;
 import com.eme22.kumaanime.AppUtils.Connection;
 import com.eme22.kumaanime.AppUtils.ObscuredPreferences;
+import com.eme22.kumaanime.AppUtils.ObscuredPreferences_v2;
 import com.eme22.kumaanime.MainActivity;
 import com.tingyik90.prefmanager.PrefManager;
 
@@ -19,6 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
@@ -45,7 +48,14 @@ public class MALSessionJobIntentService extends JobIntentService {
 
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
-        prefsenc = new ObscuredPreferences(this, this.getSharedPreferences("MAL_USERDATA", 0) );
+        //prefsenc = new ObscuredPreferences(this, this.getSharedPreferences("MAL_USERDATA", 0) );
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) prefsenc = new ObscuredPreferences_v2(this, "MAL_USERDATA").getPreferences();
+            else prefsenc = new ObscuredPreferences(this, this.getSharedPreferences("MAL_USERDATA", 0) );
+        } catch (GeneralSecurityException | IOException e) {
+            e.printStackTrace();
+        }
+
         prefs = new PrefManager(this);
         extras  = intent.getExtras();
         bundlehandler(extras.getString(ACTION));

@@ -22,7 +22,7 @@ public class AnimeList_Auth {
     private final String clientid = MAL_CLIENTID;
     private final String grantype = "authorization_code";
 
-    public String getGeneral1(String challenge) throws UnsupportedEncodingException, NoSuchAlgorithmException, URISyntaxException {
+    public String getGeneral1(String challenge) {
 
         String general = baseurl1 +"?response_type="+responsetype+"&client_id="+clientid+"&code_challenge="+challenge;
         return general;

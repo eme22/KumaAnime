@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Map;
 
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
@@ -46,7 +47,7 @@ public class DownloadService_v2 extends JobIntentService {
     private DownloadManager_v2 manager;
     private boolean success;
     private boolean isCanceled = false;
-    private Headers headers;
+    private Map<String, String> headers;
 
     public static void enqueueWork(Context context, Intent work) {
         enqueueWork(context, DownloadService_v2.class, JOB_ID, work);
@@ -72,7 +73,7 @@ public class DownloadService_v2 extends JobIntentService {
     private void check(Intent intent) {
         if (intent.getExtras() != null) {
             episode = intent.getParcelableExtra(EPISODE);
-            headers = intent.getParcelableExtra(DOWNLOAD_HEADERS);
+            headers = (Map<String, String>) intent.getSerializableExtra(DOWNLOAD_HEADERS);
             notification = new NotificationUtils(this,episode);
             manager = new DownloadManager_v2(this);
         }
@@ -145,6 +146,9 @@ public class DownloadService_v2 extends JobIntentService {
             if (!shouldContinue) {
                 stopSelf();
                 isCanceled = true;
+                output.flush();
+                output.close();
+                bis.close();
                 return;
             }
         }
@@ -164,11 +168,19 @@ public class DownloadService_v2 extends JobIntentService {
         }
         else throw new NullPointerException();
     }
-    private ResponseBody request(String link, Headers headers) throws IOException {
+    private ResponseBody request(String link, Map<String, String> headers) throws IOException {
         OkHttpClient client = new OkHttpClient.Builder().build();
         Request request;
         if (headers == null) request = new Request.Builder().url(link).build();
-        else request = new Request.Builder().url(link).headers(headers).build();
+        else
+        {
+            Request.Builder b = new Request.Builder().url(link);
+            for (String key: headers.keySet()) {
+                if (!(key== null || headers.get(key) == null))
+                    b.addHeader(key,headers.get(key));
+            }
+            request = b.build();
+        }
         return client.newCall(request).execute().body();
     }
 

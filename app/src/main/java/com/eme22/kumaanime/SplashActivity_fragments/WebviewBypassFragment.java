@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.CookieManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -103,11 +102,10 @@ public class WebviewBypassFragment extends Fragment {
                 Log.d("WEBVIEW_URL", view.getUrl());
             }
 
-            @SuppressLint("NewApi")
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 Log.d("ES NECESARIO?",url);
-                CookieManager.getInstance().setAcceptThirdPartyCookies(view, true);
+                //CookieManager.getInstance().setAcceptThirdPartyCookies(view, true);
                 //String cookies = CookieManager.getInstance().getCookie(url);
                 delayhandler.removeCallbacks(delayhandlerrunnable);
 

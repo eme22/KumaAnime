@@ -49,11 +49,11 @@ dependencies {
     implementation 'androidx.browser:browser:1.3.0'
     implementation 'androidx.paging:paging-runtime:2.1.2'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation 'androidx.mediarouter:mediarouter:1.2.1'
+    implementation 'androidx.mediarouter:mediarouter:1.2.2'
     implementation 'com.github.eme22:ServerProxy:0.1'
-    implementation 'com.github.eme22:xGetter:3.0fix'
+    implementation 'com.github.eme22:xGetter:3.2'
     implementation 'com.github.zekibiyikli:SourceGetter:master-SNAPSHOT'
-    testImplementation 'junit:junit:4.13.1'
+    testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation 'com.github.tingyik90:prefmanager:1.2'
@@ -69,9 +69,6 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.github.andhikayuana:simple-pie-chart-android:e7d9622aa9'
+    implementation "androidx.security:security-crypto:1.1.0-alpha03"
     implementation 'androidx.recyclerview:recyclerview-selection:1.1.0'
-
-    //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
-    //implementation 'androidx.multidex:multidex:2.0.1'
-    //implementation 'org.nanohttpd:nanohttpd:2.3.1'
 }

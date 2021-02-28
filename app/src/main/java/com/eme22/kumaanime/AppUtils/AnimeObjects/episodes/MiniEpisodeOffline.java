@@ -1,7 +1,6 @@
 package com.eme22.kumaanime.AppUtils.AnimeObjects.episodes;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.models.Common.MainPicture;
 
@@ -14,11 +13,10 @@ public class MiniEpisodeOffline extends MiniEpisode {
 
 
     public MiniEpisodeOffline() {
-        super();
     }
 
-    public MiniEpisodeOffline(int animeID, String name, String episode, MainPicture mainPicture, String link, File episode_file, File image) {
-        super(animeID, name, episode, mainPicture, link, false);
+    public MiniEpisodeOffline(int animeID, int online, String name, String episode, MainPicture mainPicture, String link, File episode_file, File image) {
+        super(animeID, online, name, episode, mainPicture, link, false);
         this.episode_file = episode_file;
         this.image = image;
     }
@@ -29,12 +27,8 @@ public class MiniEpisodeOffline extends MiniEpisode {
         in.writeSerializable(image);
     }
 
-    public MiniEpisodeOffline(MiniEpisode episode){
-        super(episode.getAnimeID(),episode.getName(),episode.getEpisode(),episode.getMainPicture(),episode.getLink(),episode.isViewed());
-    }
-
     public MiniEpisodeOffline(MiniEpisode episode, File episode_file, File image){
-        super(episode.getAnimeID(),episode.getName(),episode.getEpisode(),episode.getMainPicture(),episode.getLink(),episode.isViewed());
+        super(episode.getAnimeID(),episode.getOnlineID(),episode.getName(),episode.getEpisode(),episode.getMainPicture(),episode.getLink(),episode.isViewed());
         this.episode_file = episode_file;
         this.image = image;
     }

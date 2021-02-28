@@ -13,8 +13,10 @@ import com.eme22.kumaanime.Databases.MainTable.MiniAnimeTable_Repo;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.concurrent.TimeoutException;
 
 public class NewAnimeFetcher_v3 implements Runnable {
     MiniAnimeTable_Repo repo;
@@ -73,10 +75,11 @@ public class NewAnimeFetcher_v3 implements Runnable {
             c.onError(e);
             return;
         }
-        Document newID;
+        Document newID = null;
         try {
             newID = Connection.getDocOk("https://www.animeid.tv/");
-        } catch (IOException e) {
+        } catch (SocketTimeoutException ignore){}
+        catch (IOException e) {
             c.onError(e);
             return;
         }

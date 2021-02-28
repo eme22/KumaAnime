@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.webkit.CookieManager;
@@ -28,6 +29,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -50,7 +52,7 @@ private static final String baseurl = "https://www3.animeflv.net";
     private static final OkHttpClient okHttp = new OkHttpClient.Builder()
             .connectTimeout(10, TimeUnit.SECONDS)
             .writeTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
             .build();
     private static PrefManager prefs;
     private static SharedPreferences prefsenc;
@@ -158,7 +160,15 @@ private static final String baseurl = "https://www3.animeflv.net";
 
 
     private static JSONObject getUserCredentials(Context context){
-        prefsenc = new ObscuredPreferences(context, context.getSharedPreferences("MAL_USERDATA", 0) );
+        //prefsenc = new ObscuredPreferences(context, context.getSharedPreferences("MAL_USERDATA", 0) );
+        try
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) prefsenc = new ObscuredPreferences_v2(context, "MAL_USERDATA").getPreferences();
+            else prefsenc = new ObscuredPreferences(context, context.getSharedPreferences("MAL_USERDATA", 0) );
+        } catch (GeneralSecurityException | IOException e)
+        {
+            e.printStackTrace();
+        }
         String userdata = prefsenc.getString("USERJSON", null);
         JSONObject userdata2 = null;
         try {
@@ -372,6 +382,7 @@ private static final String baseurl = "https://www3.animeflv.net";
 
     public static ArrayList<MiniEpisode> getneweps(Document doc, int type){
         ArrayList<MiniEpisode> urlList = new ArrayList<>();
+        if(doc== null) return urlList;
         switch (type){
             case 0: {
                 String baseurl = "https://www3.animeflv.net";
@@ -464,6 +475,7 @@ private static final String baseurl = "https://www3.animeflv.net";
 
     public static ArrayList<MiniAnime> getnewanimes(Document doc, int type){
         ArrayList<MiniAnime> urlList = new ArrayList<>();
+        if(doc== null) return urlList;
         switch (type){
             case 0: {
                 String baseurl = "https://www3.animeflv.net";

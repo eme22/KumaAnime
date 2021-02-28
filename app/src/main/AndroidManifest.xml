@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.eme22.kumaanime">
 
-    <uses-sdk tools:overrideLibrary="com.yausername.youtubedl_android, com.yausername.youtubedl_common" />
+    <uses-sdk tools:overrideLibrary="com.yausername.youtubedl_android, com.yausername.youtubedl_common, androidx.security" />
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />

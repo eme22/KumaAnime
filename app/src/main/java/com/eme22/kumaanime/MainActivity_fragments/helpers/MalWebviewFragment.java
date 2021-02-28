@@ -63,15 +63,11 @@ public class MalWebviewFragment extends Fragment {
         final ProgressDialog pd = ProgressDialog.show(getActivity(), "", getString(R.string.loading_login),true);
         auth = new AnimeList_Auth();
         PKCE_Util pkce_util = new PKCE_Util();
-        String urlin = null;
+        String urlin;
         verifier = pkce_util.generateVerifier(128);
-        try {
-            urlin = auth.getGeneral1(verifier);
-        } catch (UnsupportedEncodingException | URISyntaxException | NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
+        urlin = auth.getGeneral1(verifier);
 
-            final WebView browser = v.findViewById(R.id.mal_login_webview);
+        final WebView browser = v.findViewById(R.id.mal_login_webview);
             browser.getSettings().setJavaScriptEnabled(true);
             browser.setHorizontalScrollBarEnabled(true);
             browser.setVerticalScrollBarEnabled(true);

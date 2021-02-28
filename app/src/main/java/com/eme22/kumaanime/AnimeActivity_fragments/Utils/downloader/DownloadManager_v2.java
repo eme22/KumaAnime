@@ -22,16 +22,18 @@ import com.eme22.kumaanime.PermissionActivity;
 import com.eme22.kumaanime.Services.Downloads.DownloadService_v2;
 
 import java.io.File;
-
-import okhttp3.Headers;
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.Map;
 
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.eme22.kumaanime.AppUtils.AppConstant.APP_FOLDER;
 
 public class DownloadManager_v2 {
 
+    private static final Map<String,String> headers = Collections.singletonMap("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36 Edg/87.0.664.66");
     private PermissionActivity activity;
-    private Context context;
+    private final Context context;
     public static final String TAG = "DOWNLOAD MANAGER";
     private static final TaskRunner taskRunner = new TaskRunner();
     private File mainDir;
@@ -140,16 +142,18 @@ public class DownloadManager_v2 {
     }
 
     public void downloadAnime(MiniEpisodeOffline offline){
-        downloadAnime(context, offline,null);
+        String link = offline.getLink();
+        if (link.contains("streamtape")) downloadAnime(offline,headers);
+        else downloadAnime(offline,null);
     }
 
-    public void downloadAnime(Context context,MiniEpisodeOffline offline, Headers headers){
+    public void downloadAnime(MiniEpisodeOffline offline, Map<String, String> headers){
         init();
         if (checkAnimeFolder(offline.getAnimeID())){
             Intent intent = new Intent(context, DownloadService_v2.class);
             intent.putExtra(DownloadService_v2.EPISODE, offline);
             if (headers != null) {
-                intent.putExtra(DownloadService_v2.DOWNLOAD_HEADERS, (Parcelable) headers.iterator());
+                intent.putExtra(DownloadService_v2.DOWNLOAD_HEADERS, (Serializable) headers);
             }
             DownloadService_v2.enqueueWork(context,intent);
         }
@@ -163,7 +167,7 @@ public class DownloadManager_v2 {
                     Intent intent = new Intent(context, DownloadService_v2.class);
                     intent.putExtra(DownloadService_v2.EPISODE, offline);
                     if (headers != null) {
-                        intent.putExtra(DownloadService_v2.DOWNLOAD_HEADERS, (Parcelable) headers.iterator());
+                        intent.putExtra(DownloadService_v2.DOWNLOAD_HEADERS, (Parcelable) headers);
                     }
                     DownloadService_v2.enqueueWork(context,intent);
                 }
