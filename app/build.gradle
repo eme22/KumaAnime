@@ -51,7 +51,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.mediarouter:mediarouter:1.2.2'
     implementation 'com.github.eme22:ServerProxy:0.1'
-    implementation 'com.github.eme22:xGetter:3.2'
+    implementation 'com.github.eme22:xGetter:b1d138d031'
     implementation 'com.github.zekibiyikli:SourceGetter:master-SNAPSHOT'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

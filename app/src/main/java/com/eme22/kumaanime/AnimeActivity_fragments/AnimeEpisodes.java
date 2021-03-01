@@ -1,16 +1,24 @@
 package com.eme22.kumaanime.AnimeActivity_fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcelable;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,6 +33,8 @@ import com.eme22.kumaanime.MainActivity_fragments.util.TaskRunner;
 import com.eme22.kumaanime.PermissionActivity;
 import com.eme22.kumaanime.R;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 
 public class AnimeEpisodes extends Fragment implements AnimeActivity.AnimeActivityLoad{
@@ -34,6 +44,7 @@ public class AnimeEpisodes extends Fragment implements AnimeActivity.AnimeActivi
     private static MiniAnime EXTRA_ANIME;
     private static RecyclerView episodes;
     private static CardView loading;
+    private ArrayList<MiniEpisode> episodesList;
     static EpisodeAdapter adapter;
 
     private static final int BACK_LENGTH = 1000;
@@ -74,7 +85,8 @@ public class AnimeEpisodes extends Fragment implements AnimeActivity.AnimeActivi
             @Override
             public void onSuccess(ArrayList<MiniEpisode> o) {
                 new Handler(Looper.getMainLooper()).post(() -> {
-                    adapter.addAll(o);
+                    episodesList = o;
+                    adapter.addAll(episodesList);
                     Log.d("RECYCLER DATA:", String.valueOf(adapter.getItemCount()));
                     loading.setVisibility(View.GONE);
                 });
@@ -135,7 +147,7 @@ public class AnimeEpisodes extends Fragment implements AnimeActivity.AnimeActivi
 
             @Override
             public void onDownloadClick(MiniEpisode anime) {
-                taskRunner.executeAsync(new Download((PermissionActivity) requireActivity(),getParentFragmentManager(),anime));
+                taskRunner.executeAsync(new Download(requireActivity(),getParentFragmentManager(),anime));
             }
 
             @Override
@@ -153,6 +165,14 @@ public class AnimeEpisodes extends Fragment implements AnimeActivity.AnimeActivi
 
             }
         });
+        RecyclerView.ItemAnimator animator = new DefaultItemAnimator(){
+            @Override
+            public boolean canReuseUpdatedViewHolder(@NonNull @NotNull RecyclerView.ViewHolder viewHolder)
+            {
+                return true;
+            }
+        };
+        episodes.setItemAnimator(animator);
         episodes.setLayoutManager(new LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false));
         episodes.setAdapter(adapter);
     }
@@ -167,4 +187,33 @@ public class AnimeEpisodes extends Fragment implements AnimeActivity.AnimeActivi
         loadepisodes();
     }
 
+    BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            com.eme22.kumaanime.Services.Downloads.Download download = intent.getParcelableExtra("download");
+            int id = intent.getIntExtra("id",-1);
+            String episode = intent.getStringExtra("episode");
+
+            if (id != EXTRA_ANIME.getId()) return;
+
+            for (int i = 0; i < episodesList.size(); i++) {
+                if (episodesList.get(i).getEpisode().equals(episode)) {
+                    adapter.updateDownload(i, download.getProgress());
+                    break;
+                }
+            }
+        }
+    };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(receiver, new IntentFilter("download"));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(receiver);
+    }
 }

@@ -101,7 +101,17 @@ public class DownloadManager_v2 {
     }
 
     public boolean isAnimeDownloaded(MiniEpisode episode){
-        return getEpisodeFile(episode,true).exists();
+        return getEpisodeFile(episode,true).exists() && getEpisodeFile(episode, false).exists();
+    }
+
+    public boolean deleteAnime(MiniEpisode episode){
+        try
+        {
+            return getEpisodeFile(episode,true).delete() && getEpisodeFile(episode, false).delete();
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public File getEpisodeFile(MiniEpisode episode, boolean video){

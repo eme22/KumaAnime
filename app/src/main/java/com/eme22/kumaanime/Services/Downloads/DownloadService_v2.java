@@ -191,6 +191,9 @@ public class DownloadService_v2 extends JobIntentService {
     private void sendIntent(Download download) {
         notification.sendNotification(download,totalFileSize);
         Intent intent = new Intent(AppConstant.ANIME_DOWNLOAD_MESSAGE_PROGRESS);
+        intent.setAction("download");
+        intent.putExtra("id", episode.getAnimeID());
+        intent.putExtra("episode", episode.getEpisode());
         intent.putExtra("download", download);
         LocalBroadcastManager.getInstance(DownloadService_v2.this).sendBroadcast(intent);
     }

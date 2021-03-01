@@ -1,12 +1,7 @@
 package com.eme22.kumaanime.AnimeActivity_fragments;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -14,24 +9,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
-import com.eme22.kumaanime.AppUtils.AnimeObjects.server.Server;
-import com.eme22.kumaanime.AppUtils.Servers.Common.CommonServer;
-import com.eme22.kumaanime.AppUtils.Servers.Fembed.Datum;
-import com.eme22.kumaanime.AppUtils.Servers.Fembed.Fembed;
-import com.eme22.kumaanime.AppUtils.Servers.Yu.Yu;
 import com.eme22.kumaanime.MainActivity_fragments.util.TaskRunner;
-import com.eme22.serverproxy.BufferFile;
-import com.eme22.serverproxy.BufferProxy;
-import com.eme22.serverproxy.DownloadTask;
-import com.htetznaing.lowcostvideo.LowCostVideo;
-import com.zbiyikli.sgetter.SourceGetter;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Play fragment {@link DialogFragment} subclass.

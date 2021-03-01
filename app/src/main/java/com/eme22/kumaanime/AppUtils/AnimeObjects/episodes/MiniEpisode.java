@@ -7,12 +7,12 @@ import com.eme22.kumaanime.AppUtils.AnimeList_Integration.api.data.models.Common
 
 public class MiniEpisode implements Parcelable {
     private int animeID;
-    private int onlineID;
     private String name;
     private String episode;
     private MainPicture mainPicture;
     private String link;
     private boolean viewed;
+    private int progress;
 
     public void setMainPicture(MainPicture mainPicture) {
         this.mainPicture = mainPicture;
@@ -46,12 +46,12 @@ public class MiniEpisode implements Parcelable {
         this.viewed = viewed;
     }
 
-    public int getOnlineID() {
-        return onlineID;
+    public int getProgress() {
+        return progress;
     }
 
-    public void setOnlineID(int onlineID) {
-        this.onlineID = onlineID;
+    public void setProgress(int progress) {
+        this.progress = progress;
     }
 
     public void setLink(String link) {
@@ -75,7 +75,7 @@ public class MiniEpisode implements Parcelable {
 
     public MiniEpisode(int animeID, int onlineID, String name, String episode, MainPicture mainPicture, String link, boolean viewed) {
         this.animeID = animeID;
-        this.onlineID = onlineID;
+        this.progress = onlineID;
         this.name = name;
         this.episode = episode;
         this.mainPicture = mainPicture;
@@ -86,7 +86,7 @@ public class MiniEpisode implements Parcelable {
     protected MiniEpisode(Parcel in)
     {
         animeID = in.readInt();
-        onlineID = in.readInt();
+        progress = in.readInt();
         name = in.readString();
         episode = in.readString();
         mainPicture = in.readParcelable(MainPicture.class.getClassLoader());
@@ -98,7 +98,7 @@ public class MiniEpisode implements Parcelable {
     public void writeToParcel(Parcel dest, int flags)
     {
         dest.writeInt(animeID);
-        dest.writeInt(onlineID);
+        dest.writeInt(progress);
         dest.writeString(name);
         dest.writeString(episode);
         dest.writeParcelable(mainPicture, flags);

@@ -8,7 +8,7 @@ import com.eme22.kumaanime.AppUtils.Callback;
 import com.eme22.kumaanime.AppUtils.Connection;
 import com.eme22.kumaanime.AppUtils.NoSourceFoundException;
 import com.eme22.kumaanime.AppUtils.Servers.Common.CommonServer;
-import com.eme22.kumaanime.AppUtils.Servers.Fembed.Fembed;
+import com.eme22.kumaanime.AppUtils.Servers.Fembed.MultiServer;
 import com.eme22.kumaanime.AppUtils.Servers.Yu.Yu;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -52,7 +52,7 @@ public class ServerUtil {
             switch (server.getName()) {
                 case "fembed": {
                     try {
-                        Fembed link = fembedDecoder(server.getSource());
+                        MultiServer link = fembedDecoder(server.getSource());
                         callback.onSuccess(link);
                     } catch (IOException | JSONException e) {
                         callback.onError(e);
@@ -107,7 +107,7 @@ public class ServerUtil {
         else return null;
     }
 
-    private static Fembed fembedDecoder(String url) throws IOException, JSONException {
+    private static MultiServer fembedDecoder(String url) throws IOException, JSONException {
         Pattern pattern = Pattern.compile("(gcloud\\.live|fembed\\.com|feurl\\.com|vcdn\\.space|embedsito\\.com)/(v|api/source)/([^(?|#)]*)", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(url);
         if(matcher.find()) {
@@ -118,7 +118,7 @@ public class ServerUtil {
             String id = get_fEmbed_video_ID(url);
             Log.d("FEMBED VIDEO ID" ,id);
             Log.d("FEMBED VIDEO URL" ,"https://www.fembed.com/api/source/"+id);
-            return JsonToObject(Connection.postConnection("https://www.fembed.com/api/source/"+id,new FormBody.Builder().build()),Fembed.class);
+            return JsonToObject(Connection.postConnection("https://www.fembed.com/api/source/"+id,new FormBody.Builder().build()), MultiServer.class);
 
         } else {
             Log.e("MATCH ERROR","Unable to get ID for url: "+url);

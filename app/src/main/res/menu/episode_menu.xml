@@ -15,5 +15,10 @@
         android:id="@+id/episode_cast"
         android:title="@string/cast"
         tools:icon="@drawable/mr_button_light" />
+    <item
+        android:id="@+id/episode_erase"
+        android:title="@string/erase"
+        tools:icon="@drawable/ic_baseline_delete"
+        android:visible="false"/>
 <!--        app:actionProviderClass="androidx.mediarouter.app.MediaRouteActionProvider"-->
 </menu>

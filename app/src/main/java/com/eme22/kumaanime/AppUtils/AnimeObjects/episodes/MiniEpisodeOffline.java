@@ -28,7 +28,7 @@ public class MiniEpisodeOffline extends MiniEpisode {
     }
 
     public MiniEpisodeOffline(MiniEpisode episode, File episode_file, File image){
-        super(episode.getAnimeID(),episode.getOnlineID(),episode.getName(),episode.getEpisode(),episode.getMainPicture(),episode.getLink(),episode.isViewed());
+        super(episode.getAnimeID(),episode.getProgress(),episode.getName(),episode.getEpisode(),episode.getMainPicture(),episode.getLink(),episode.isViewed());
         this.episode_file = episode_file;
         this.image = image;
     }

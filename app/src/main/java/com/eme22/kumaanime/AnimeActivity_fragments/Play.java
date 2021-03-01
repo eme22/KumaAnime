@@ -3,9 +3,12 @@ package com.eme22.kumaanime.AnimeActivity_fragments;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Browser;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -22,8 +25,9 @@ import com.eme22.kumaanime.AppUtils.AnimeObjects.episodes.MiniEpisode;
 import com.eme22.kumaanime.AppUtils.AnimeObjects.server.Server;
 import com.eme22.kumaanime.AppUtils.Callback;
 import com.eme22.kumaanime.AppUtils.Servers.Common.CommonServer;
+import com.eme22.kumaanime.AppUtils.Servers.Common.HeadersServer;
 import com.eme22.kumaanime.AppUtils.Servers.Fembed.Datum;
-import com.eme22.kumaanime.AppUtils.Servers.Fembed.Fembed;
+import com.eme22.kumaanime.AppUtils.Servers.Fembed.MultiServer;
 import com.eme22.kumaanime.AppUtils.Servers.Yu.Yu;
 import com.eme22.kumaanime.MainActivity_fragments.util.TaskRunner;
 import com.eme22.kumaanime.PlayActivityFragments.Util.SourceFetcher_v3;
@@ -40,7 +44,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -94,17 +100,19 @@ public class Play implements Runnable{
             @Override
             public void onTaskCompleted(ArrayList<XModel> vidURL, boolean multiple_quality) {
                 if (multiple_quality){
-                    List<Datum> data = new ArrayList<>();
+                    HashMap<String,String> data = new HashMap<>();
                     for (XModel model : vidURL) {
                         String name = model.getQuality();
                         String url = model.getUrl();
-                        data.add(new Datum().withFile(url).withLabel(name));
+                        data.put(name,url);
                     }
-                    manageServer(new Fembed().withData(data));
+                    manageServer(new MultiServer().withData(data));
 
                 } else {
                     String url  = vidURL.get(0).getUrl();
-                    manageServer(new CommonServer().withFile(url));
+                    HashMap<String, String> headers = vidURL.get(0).getHeaders();
+                    if (headers != null)manageServer(new HeadersServer().withHeaders(vidURL.get(0).getHeaders()).withFile(url));
+                    else manageServer(new CommonServer().withFile(url));
                 }
             }
 
@@ -130,13 +138,13 @@ public class Play implements Runnable{
             @Override
             public void onTaskCompleted(ArrayList<com.zbiyikli.sgetter.Model.XModel> vidURL, boolean multiple_quality) {
                 if (multiple_quality){
-                    List<Datum> data = new ArrayList<>();
+                    HashMap<String,String> data = new HashMap<>();
                     for (com.zbiyikli.sgetter.Model.XModel model : vidURL) {
                         String name = model.getQuality();
                         String url = model.getUrl();
-                        data.add(new Datum().withFile(url).withLabel(name));
+                        data.put(name,url);
                     }
-                    manageServer(new Fembed().withData(data));
+                    manageServer(new MultiServer().withData(data));
 
                 } else {
                     String url  = vidURL.get(0).getUrl();
@@ -216,20 +224,19 @@ public class Play implements Runnable{
 
     public void manageServer(Object o){
         showPD();
-        if (o instanceof Fembed) {
-            Fembed data = (Fembed) o;
-            List<Datum> links = data.getData();
+        if (o instanceof MultiServer) {
+            MultiServer data = (MultiServer) o;
+            HashMap<String, String> links = data.getData();
             if (links.size()>1){
                 ArrayList<String> data2 = new ArrayList<>();
                 ArrayList<String> label = new ArrayList<>();
-                for (Datum d: links) {
-                    data2.add(d.getFile());
-                    label.add(d.getLabel());
+                for (Map.Entry<String, String> d: links.entrySet()) {
+                    data2.add(d.getValue());
+                    label.add(d.getKey());
                 }
                 if (!(data2.size() == label.size())) throw new NullPointerException();
                 subvideo(data2.toArray(new String[0]),label.toArray(new String[0]));
             }
-            else startVideo(links.get(0).getFile());
         }
         else if (o instanceof Yu){
             Log.d("YU HERE 2", "");
@@ -289,6 +296,11 @@ public class Play implements Runnable{
             Log.e("SOURCE", data.getFile());
             startVideo(data.getFile());
         }
+        else if (o instanceof HeadersServer){
+            HeadersServer data = (HeadersServer) o;
+            Log.e("SOURCE", data.getFile());
+            startVideo(data.getFile(), data.getHeaders());
+        }
         else {
             Log.e("SOURCE", "error");
         }
@@ -314,9 +326,29 @@ public class Play implements Runnable{
     }
 
     void startVideo(String file) {
+        startVideo(file, null);
+    }
+
+    void startVideo(String file, HashMap<String, String> headers) {
         hidePD();
+
+        if (file.contains("mega.nz")) {
+            megaload(file);
+            return;
+        }
+
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.parse(file), "video/mp4");
+
+        if (headers != null){
+            Bundle bundle = new Bundle();
+            for (Map.Entry<String, String> d: headers.entrySet()) {
+                bundle.putString(d.getKey(), d.getValue());
+            }
+            intent.putExtra(Browser.EXTRA_HEADERS, bundle);
+        }
+
+
         updateanime();
         Log.d("EPISODE SEEING", String.valueOf(episode));
 
@@ -384,5 +416,21 @@ public class Play implements Runnable{
 
     void hidePD(){
         new Handler(Looper.getMainLooper()).post(() -> pd.dismiss());
+    }
+
+    void megaload(String file){
+        boolean installed;
+        try {
+            context.getPackageManager().getPackageInfo("mega.privacy.android.app", PackageManager.GET_ACTIVITIES);
+            installed = true;
+        } catch (PackageManager.NameNotFoundException e) {
+            installed = false;
+        }
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW);
+        browserIntent.setData(Uri.parse(file));
+        if(installed) browserIntent.setPackage("mega.privacy.android.app");
+        updateanime();
+        Log.d("EPISODE SEEING", String.valueOf(episode));
+        context.startActivity(browserIntent);
     }
 }

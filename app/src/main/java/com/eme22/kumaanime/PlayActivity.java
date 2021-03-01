@@ -16,14 +16,16 @@ import com.eme22.kumaanime.AppUtils.Callback;
 import com.eme22.kumaanime.AppUtils.NoSourceFoundException;
 import com.eme22.kumaanime.AppUtils.Servers.Common.CommonServer;
 import com.eme22.kumaanime.AppUtils.Servers.Fembed.Datum;
-import com.eme22.kumaanime.AppUtils.Servers.Fembed.Fembed;
+import com.eme22.kumaanime.AppUtils.Servers.Fembed.MultiServer;
 import com.eme22.kumaanime.AppUtils.Theming;
 import com.eme22.kumaanime.MainActivity_fragments.util.TaskRunner;
 import com.eme22.kumaanime.PlayActivityFragments.Util.SourceFetcher_v2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Deprecated
 public class PlayActivity extends AppCompatActivity {
@@ -108,20 +110,19 @@ public class PlayActivity extends AppCompatActivity {
 
 
     public void manageServer(Object o){
-        if (o instanceof Fembed) {
-            Fembed data = (Fembed) o;
-            List<Datum> links = data.getData();
+        if (o instanceof MultiServer) {
+            MultiServer data = (MultiServer) o;
+            HashMap<String, String> links = data.getData();
             if (links.size()>1){
                 String[] Links = {};
                 String[] Labels = {};
-                for (Datum d: links) {
-                    Links = append(Links,d.getFile());
-                    Labels = append(Labels,d.getLabel());
+                for (Map.Entry<String, String> d: links.entrySet()) {
+                    Links = append(Links,d.getValue());
+                    Labels = append(Labels,d.getKey());
                 }
                 if (!(Links.length == Labels.length)) throw new NullPointerException();
                 subvideo(Labels,Links);
             }
-            else startVideo(links.get(0).getFile());
         }
         if (o instanceof CommonServer){
             CommonServer data = (CommonServer) o;

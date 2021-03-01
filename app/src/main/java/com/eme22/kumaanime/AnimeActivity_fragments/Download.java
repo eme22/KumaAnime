@@ -1,6 +1,8 @@
 package com.eme22.kumaanime.AnimeActivity_fragments;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 
 import androidx.fragment.app.FragmentManager;
 
@@ -8,6 +10,8 @@ import com.eme22.kumaanime.AnimeActivity_fragments.Utils.downloader.DownloadMana
 import com.eme22.kumaanime.AppUtils.AnimeObjects.episodes.MiniEpisode;
 import com.eme22.kumaanime.AppUtils.AnimeObjects.episodes.MiniEpisodeOffline;
 import com.eme22.kumaanime.PermissionActivity;
+
+import java.util.HashMap;
 
 public class Download extends Play{
 
@@ -20,10 +24,21 @@ public class Download extends Play{
 
     @Override
     protected void startVideo(String file) {
+        startVideo(file, null);
+    }
+
+    @Override
+    protected void startVideo(String file, HashMap<String, String> headers) {
         hidePD();
-        //MiniEpisodeOffline episode2 = new MiniEpisodeOffline(episode, managerV2.getEpisodeFile(episode,true),managerV2.getEpisodeFile(episode,false));
+
+        if (file.contains("mega.nz")) {
+            megaload(file);
+            return;
+        }
+
         MiniEpisodeOffline episode2 = new MiniEpisodeOffline(episode_anim,managerV2.getEpisodeFile(episode_anim,true),managerV2.getEpisodeFile(episode_anim,false));
         episode2.setLink(file);
-        managerV2.downloadAnime(episode2);
+        if (headers != null) managerV2.downloadAnime(episode2, headers);
+        else managerV2.downloadAnime(episode2);
     }
 }
